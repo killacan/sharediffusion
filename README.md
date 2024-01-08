@@ -14,12 +14,11 @@ I am going to be using the T3 stack (https://create.t3.gg/) for this project.
 
 - TailwindCSS
 - Typescript
-- tRPC
 - NextJS
-- Prisma
 - NextAuth.js
+- supabase
 
-Still undecided on what database to use, and who to host images with.
+Still undecided on who to host images with.
 
 This project is still in the early planning stages, so many details might change once things get to an actual production version.
 
