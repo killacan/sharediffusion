@@ -34,6 +34,7 @@ export default function Login({
     const origin = headers().get('origin')
     const email = formData.get('email') as string
     const password = formData.get('password') as string
+    const username = formData.get('username') as string
     const cookieStore = cookies()
     const supabase = createClient(cookieStore)
 
@@ -41,6 +42,9 @@ export default function Login({
       email,
       password,
       options: {
+        data: {
+          username,
+        },
         emailRedirectTo: `${origin}/auth/callback`,
       },
     })
@@ -79,6 +83,15 @@ export default function Login({
         className="animate-in flex-1 flex flex-col w-full justify-center gap-2 text-foreground"
         action={signIn}
       >
+        <label className="text-md" htmlFor="email">
+          Username
+        </label>
+        <input
+          className="rounded-md px-4 py-2 bg-inherit border mb-6"
+          name="username"
+          placeholder="FrankTheTanks69420"
+          required
+        />
         <label className="text-md" htmlFor="email">
           Email
         </label>
