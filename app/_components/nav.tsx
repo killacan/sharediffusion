@@ -2,6 +2,7 @@ import AuthButton from '../../components/AuthButton'
 import { createClient } from '@/utils/supabase/server'
 import { cookies } from 'next/headers'
 import Link from 'next/link'
+import LinkComponent from './link'
 
 export default async function Nav() {
 
@@ -27,7 +28,8 @@ export default async function Nav() {
           {isSupabaseConnected && <AuthButton />}
         </div>
         <div className="w-full max-w-4xl flex items-center p-3 text-sm">
-          <Link className='' href={"/models"}>Models</Link>
+          <LinkComponent href={"/models"}>Models</LinkComponent>
+          <LinkComponent href={"/photos"}>Photos</LinkComponent>
         </div>
     </nav>
   )
