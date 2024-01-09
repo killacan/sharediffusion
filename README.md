@@ -1,30 +1,30 @@
 # sharediffusion
 
-Hello and welcome to the project! This is my first attempt at really making something open source and free. Considering recent developments with CivitAI and how they plan on monetizing their platform I decided that there has to be another way. Thus here we are.
+Welcome to Sharediffusion, an open-source and free platform for sharing and hosting machine learning models. In response to recent developments with CivitAI and their monetization plans, Sharediffusion aims to provide an alternative option that prioritizes openness, freedom, and low cost.
 
-### The Plan
+## The Vision
 
-The plan here is to create a platform that is open source, free to use, and low cost. How this will be accomplished is by having people self host their own models, and use torrents to share the models.
+The core idea behind Sharediffusion is to create a decentralized platform where users can self-host their own machine learning models. The distribution of models will be facilitated through torrents, ensuring a peer-to-peer sharing mechanism. While future plans may include hosting models centrally, the primary focus currently is on empowering users to manage their own instances.
 
-In the future I might be able to host models as well, but for now I don't have the resources to do so.
+## Tech Stack
 
-### The Tech
+Here's the tech stack chosen for building Sharediffusion:
 
-I am going to be using the T3 stack (https://create.t3.gg/) for this project.
+- **TailwindCSS:** A utility-first CSS framework for efficient styling.
+- **Typescript:** Enhancing code quality and maintainability with strong typing.
+- **NextJS:** A React framework for building server-rendered applications.
+- **Supabase:** An open-source alternative to Firebase, providing a scalable backend.
 
-- TailwindCSS
-- Typescript
-- NextJS
-- NextAuth.js
-- supabase
+The choice of image hosting service is still under consideration, and decisions will be made based on practical considerations during the development process.
 
-Still undecided on who to host images with.
+As the project is in the early planning stages, many details are subject to change as it progresses toward a production version.
 
-This project is still in the early planning stages, so many details might change once things get to an actual production version.
+## The Promise
 
-### My Promise
+We make a commitment to transparency and user-centric principles:
 
-I promise to not keep any models / content behind a paywall. I am going to figure out a way to get donations/funding to keep this project going, but it will not get in the way of the content.
+- **No Paywall:** Sharediffusion pledges not to restrict access to models or content behind a paywall.
+- **Sustainability:** While seeking donations/funding to sustain the project, it will not interfere with user access to content.
 
-If I break this promise, the source code is here, and you can fork it and do whatever you want with it, so long as it complies with the license.
+If at any point these promises are compromised, the source code is open for scrutiny and use. Feel free to fork it and take matters into your own hands! Your contributions and involvement in this open-source endeavor are highly valued.
 
