@@ -4,7 +4,7 @@ Welcome to Sharediffusion, an open-source and free platform for sharing and host
 
 ## The Vision
 
-The core idea behind Sharediffusion is to create a decentralized platform where users can self-host their own machine learning models. The distribution of models will be facilitated through torrents, ensuring a peer-to-peer sharing mechanism. While future plans may include hosting models centrally, the primary focus currently is on empowering users to manage their own instances.
+The core idea behind Sharediffusion is to create a community focused platform where users can self-host their own machine learning models. The distribution of models will be facilitated through torrents, ensuring a peer-to-peer sharing mechanism. While future plans may include hosting models centrally, the primary focus currently is on empowering users to manage their own instances.
 
 ## Tech Stack
 
@@ -26,5 +26,5 @@ We make a commitment to transparency and user-centric principles:
 - **No Paywall:** Sharediffusion pledges not to restrict access to models or content behind a paywall.
 - **Sustainability:** While seeking donations/funding to sustain the project, it will not interfere with user access to content.
 
-If at any point these promises are compromised, the source code is open for scrutiny and use. Feel free to fork it and take matters into your own hands! Your contributions and involvement in this open-source endeavor are highly valued.
+If at any point these promises are compromised, the source code will remain open. Feel free to fork it and take matters into your own hands! Your contributions and involvement in this open-source endeavor are highly valued.
 
