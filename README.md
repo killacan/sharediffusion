@@ -28,3 +28,12 @@ We make a commitment to transparency and user-centric principles:
 
 If at any point these promises are compromised, the source code will remain open. Feel free to fork it and take matters into your own hands! Your contributions and involvement in this open-source endeavor are highly valued.
 
+## Roadmap
+
+The project is currently in the planning stages, and the roadmap will be updated as development progresses.
+
+- [x] Create a basic UI mockup
+- [x] Create basic user authentication / login system
+- [ ] Create create basic user profile page/dashboard
+- [ ] Create posting system for models
+- [ ] Create posting system for images
