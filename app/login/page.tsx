@@ -1,4 +1,4 @@
-import Link from 'next/link'
+// import Link from 'next/link'
 import { headers, cookies } from 'next/headers'
 import { createClient } from '@/utils/supabase/server'
 import { redirect } from 'next/navigation'
@@ -13,6 +13,7 @@ export default function Login({
 
     const email = formData.get('email') as string
     const password = formData.get('password') as string
+    const username = formData.get('username') as string
     const cookieStore = cookies()
     const supabase = createClient(cookieStore)
 
@@ -37,6 +38,7 @@ export default function Login({
     const username = formData.get('username') as string
     const cookieStore = cookies()
     const supabase = createClient(cookieStore)
+    const { data: user } = await supabase.from('users').select('*').eq('username', username).single()
 
     const { error } = await supabase.auth.signUp({
       email,
@@ -49,6 +51,10 @@ export default function Login({
       },
     })
 
+    if (user) {
+      return redirect('/login?message=Username already taken')
+    }
+
     if (error) {
       console.log(error)
       return redirect('/login?message=Could not authenticate user')
@@ -59,7 +65,7 @@ export default function Login({
 
   return (
     <div className="flex-1 flex flex-col w-full px-8 sm:max-w-md justify-center gap-2">
-      <Link
+      {/* <Link
         href="/"
         className="absolute left-8 top-8 py-2 px-4 rounded-md no-underline text-foreground bg-btn-background hover:bg-btn-background-hover flex items-center group text-sm"
       >
@@ -78,13 +84,13 @@ export default function Login({
           <polyline points="15 18 9 12 15 6" />
         </svg>{' '}
         Back
-      </Link>
+      </Link> */}
 
       <form
         className="animate-in flex-1 flex flex-col w-full justify-center gap-2 text-foreground"
         action={signIn}
       >
-        <label className="text-md" htmlFor="email">
+        <label className="text-md" htmlFor="username">
           Username
         </label>
         <input

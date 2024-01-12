@@ -19,12 +19,14 @@ export default async function Index() {
           <div className="flex flex-col gap-6">
             <h2 className="text-3xl text-center">About</h2>
 
-            <p>Share Diffusion is a platform for sharing stable diffusion models. Since stable diffusion models
-              are often large, and servers for hosting them are expensive, Share Diffusion allows users to upload
-              their own models and share them with others using magnet links. 
+            <p>
+              Share Diffusion is a platform for sharing stable diffusion models. Since stable diffusion models
+              are often large, and servers for hosting them are expensive, Share Diffusion allows users to share their
+              models using magnet links. 
             </p>
 
-            <p>My goal with this project is to be a community driven platform, with a focus on maintaining 
+            <p>
+              My goal with this project is to be a community driven platform, with a focus on maintaining 
               independence from any company or organization. My goal is to never have to run ads, sell user 
               data, or otherwise compromise the integrity of the platform. 
             </p>
