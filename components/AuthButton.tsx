@@ -4,6 +4,7 @@ import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
 import { userState } from '@/app/_components/user'
 import { User } from '@supabase/supabase-js'
+import LinkComponent from '@/app/_components/link'
 
 interface AuthButtonProps {
   user: User | null;
@@ -30,7 +31,7 @@ export default function AuthButton({user}: AuthButtonProps) {
 
   return user ? (
     <div className="flex items-center gap-4">
-      Hey, {user.user_metadata.username}!
+      <LinkComponent href={`/profiles/${user.user_metadata.username}`}>{user.user_metadata.username}!</LinkComponent>
       <form action={signOut}>
         <button className="py-2 px-4 rounded-md no-underline bg-btn-background hover:bg-btn-background-hover">
           Logout
