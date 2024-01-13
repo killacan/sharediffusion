@@ -2,6 +2,8 @@
 import { headers, cookies } from 'next/headers'
 import { createClient } from '@/utils/supabase/server'
 import { redirect } from 'next/navigation'
+import { FaDiscord } from 'react-icons/fa'
+import OAuthWithDiscord from '../_components/oauthbutton'
 
 export default function Login({
   searchParams,
@@ -62,6 +64,24 @@ export default function Login({
 
     return redirect('/login?message=Check email to continue sign in process')
   }
+
+  const signInWithDiscord = async () => {
+    'use server';
+  
+    const cookieStore = cookies();
+    const supabase = createClient(cookieStore);
+    const { data, error } = await supabase.auth.signInWithOAuth({
+      provider: 'discord',
+    });
+  
+    if (error) {
+      // Use a simple object for redirection
+    }
+  
+    // Use a simple object for redirection
+  };
+
+
 
   return (
     <div className="flex-1 flex flex-col w-full px-8 sm:max-w-md justify-center gap-2">
@@ -127,12 +147,16 @@ export default function Login({
         >
           Sign Up
         </button>
+
         {searchParams?.message && (
           <p className="mt-4 p-4 bg-foreground/10 text-foreground text-center">
             {searchParams.message}
           </p>
         )}
       </form>
+        <div className="flex justify-center">
+          {/* <OAuthWithDiscord signInWithDiscord={signInWithDiscord} /> */}
+        </div>
     </div>
   )
 }
