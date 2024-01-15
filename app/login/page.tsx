@@ -1,17 +1,17 @@
-// import Link from 'next/link'
 import { headers, cookies } from 'next/headers'
 import { createClient } from '@/utils/supabase/server'
 import { redirect } from 'next/navigation'
-import { FaDiscord } from 'react-icons/fa'
 import OAuthWithDiscord from '../_components/oauthbutton'
 
-export default function Login({
+export default async function Login({
   searchParams,
 }: {
   searchParams: { message: string }
 }) {
+
+  
   const signIn = async (formData: FormData) => {
-    'use server'
+    'use server';
 
     const email = formData.get('email') as string
     const password = formData.get('password') as string
@@ -32,14 +32,15 @@ export default function Login({
   }
 
   const signUp = async (formData: FormData) => {
-    'use server'
+    'use server';
+
+    const cookieStore = cookies()
+    const supabase = createClient(cookieStore)
 
     const origin = headers().get('origin')
     const email = formData.get('email') as string
     const password = formData.get('password') as string
     const username = formData.get('username') as string
-    const cookieStore = cookies()
-    const supabase = createClient(cookieStore)
     const { data: user } = await supabase.from('users').select('*').eq('username', username).single()
 
     const { error } = await supabase.auth.signUp({
@@ -64,23 +65,6 @@ export default function Login({
 
     return redirect('/login?message=Check email to continue sign in process')
   }
-
-  const signInWithDiscord = async () => {
-    'use server';
-  
-    const cookieStore = cookies();
-    const supabase = createClient(cookieStore);
-    const { data, error } = await supabase.auth.signInWithOAuth({
-      provider: 'discord',
-    });
-  
-    if (error) {
-      // Use a simple object for redirection
-    }
-  
-    // Use a simple object for redirection
-  };
-
 
 
   return (
@@ -155,7 +139,7 @@ export default function Login({
         )}
       </form>
         <div className="flex justify-center">
-          {/* <OAuthWithDiscord signInWithDiscord={signInWithDiscord} /> */}
+          <OAuthWithDiscord />
         </div>
     </div>
   )
