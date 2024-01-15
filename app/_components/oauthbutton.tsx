@@ -9,7 +9,10 @@ export default function OAuthWithDiscord() {
 
   const handleDiscord = async () => {
     const { error } = await supabase.auth.signInWithOAuth({
-      provider: 'discord'
+      provider: 'discord', 
+      options: {
+        redirectTo: 'http://localhost:3000/auth/v1/callback/',
+      },
     })
 
     if (error) {
