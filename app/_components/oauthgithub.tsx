@@ -1,18 +1,17 @@
 'use client'
 
-import { FaDiscord } from "react-icons/fa";
+import { FaGithub } from "react-icons/fa";
 import { createClient } from '@/utils/supabase/client'
-import { getURL } from "./getauthurl";
 
-export default function OAuthWithDiscord() {
+export default function OAuthWithGithub() {
 
   const supabase = createClient()
 
-  const handleDiscord = async () => {
+  const handleGithub = async () => {
     const { error } = await supabase.auth.signInWithOAuth({
-      provider: 'discord', 
+      provider: 'github', 
       options: {
-        redirectTo: getURL(),
+        redirectTo: 'http://localhost:3000/auth/v1/callback/',
       },
     })
 
@@ -23,10 +22,10 @@ export default function OAuthWithDiscord() {
 
     return (
         <button
-        onClick={handleDiscord}
+        onClick={handleGithub}
           className="flex items-center justify-center border border-foreground/20 rounded-md px-4 py-2 text-foreground mb-2"
         >
-          Sign In with Discord <FaDiscord className='text-2xl mx-3' />
+          Sign In with Github <FaGithub className='text-2xl mx-3' />
       </button>
     );
   }

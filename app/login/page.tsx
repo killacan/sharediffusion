@@ -2,6 +2,9 @@ import { headers, cookies } from 'next/headers'
 import { createClient } from '@/utils/supabase/server'
 import { redirect } from 'next/navigation'
 import OAuthWithDiscord from '../_components/oauthbutton'
+import OAuthWithGithub from '../_components/oauthgithub'
+
+
 
 export default async function Login({
   searchParams,
@@ -9,7 +12,6 @@ export default async function Login({
   searchParams: { message: string }
 }) {
 
-  
   const signIn = async (formData: FormData) => {
     'use server';
 
@@ -132,14 +134,17 @@ export default async function Login({
           Sign Up
         </button>
 
+        <div>
+          <OAuthWithDiscord />
+          <OAuthWithGithub />
+        </div>
+
+
         {searchParams?.message && (
           <p className="mt-4 p-4 bg-foreground/10 text-foreground text-center">
             {searchParams.message}
           </p>
         )}
-        <div className="flex justify-center">
-          <OAuthWithDiscord />
-        </div>
       </form>
     </div>
   )
