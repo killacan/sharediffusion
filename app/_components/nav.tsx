@@ -26,7 +26,7 @@ export default async function Nav() {
         <div className="w-full max-w-4xl flex justify-between items-center p-3 text-sm">
           <div className='flex gap-2'>
             <a className='text-xl' href={"/"}>Share Diffusion</a>
-            {user && <LinkComponent href={"/post"}>Create a Post</LinkComponent>}
+            {user && <LinkComponent href={"/post"}>Post A Model</LinkComponent>}
           </div>
           <AuthButton user={user}/>
         </div>

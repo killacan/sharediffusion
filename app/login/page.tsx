@@ -3,17 +3,12 @@ import OAuthWithDiscord from '../_components/oauthbutton'
 import OAuthWithGithub from '../_components/oauthgithub'
 import { signIn, signUp } from '../_components/loginactions'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../_components/ui/tabs"
-import AuthButton from '../_components/authButton'
-
 
 export default function Login({
   searchParams,
 }: {
   searchParams: { message: string }
 }) {
-
-
-
 
   return (
     <div className="flex-1 flex flex-col w-full sm:max-w-lg px-8 gap-2 place-content-center">
