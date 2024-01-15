@@ -3,6 +3,7 @@
 import { FaDiscord } from "react-icons/fa";
 import { createClient } from '@/utils/supabase/client'
 import { getURL } from "./getauthurl";
+import AuthButton from "./authButton";
 
 export default function OAuthWithDiscord() {
 
@@ -22,11 +23,10 @@ export default function OAuthWithDiscord() {
   }
 
     return (
-        <button
-        onClick={handleDiscord}
-          className="flex items-center justify-center border border-foreground/20 rounded-md px-4 py-2 text-foreground mb-2 w-1/2"
+        <AuthButton
+        handleFunction={handleDiscord}
         >
           with Discord <FaDiscord className='text-2xl mx-3' />
-      </button>
+      </AuthButton>
     );
   }

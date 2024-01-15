@@ -22,7 +22,7 @@ export default function RootLayout({
 
   
   return (
-    <html lang="en" className={GeistSans.className}>
+    <html lang="en" className={"font-sans"}>
       <SpeedInsights/>
       <body className="bg-background text-foreground">
         <main className="min-h-screen flex flex-col items-center">
