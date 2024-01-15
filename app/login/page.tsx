@@ -137,10 +137,10 @@ export default async function Login({
             {searchParams.message}
           </p>
         )}
-      </form>
         <div className="flex justify-center">
           <OAuthWithDiscord />
         </div>
+      </form>
     </div>
   )
 }

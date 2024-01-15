@@ -16,6 +16,11 @@ export default async function Nav() {
     data: { user },
   } = await supabase.auth.getUser()
 
+  user ? 
+    console.log(user)
+   :
+    console.log("no user")
+
   return (
     <nav className="w-full flex flex-col justify-center items-center border-b border-b-foreground/10 h-17">
         <div className="w-full max-w-4xl flex justify-between items-center p-3 text-sm">
