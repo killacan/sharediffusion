@@ -70,7 +70,7 @@ export default async function Login({
 
 
   return (
-    <div className="flex-1 flex flex-col w-full px-8 sm:max-w-md justify-center gap-2">
+    <div className="flex-1 flex flex-col w-full px-8 sm:max-w-md gap-2 place-content-center">
       {/* <Link
         href="/"
         className="absolute left-8 top-8 py-2 px-4 rounded-md no-underline text-foreground bg-btn-background hover:bg-btn-background-hover flex items-center group text-sm"
@@ -93,7 +93,7 @@ export default async function Login({
       </Link> */}
 
       <form
-        className="animate-in flex-1 flex flex-col w-full justify-center gap-2 text-foreground"
+        className="animate-in flex flex-col w-full justify-center gap-2 text-foreground"
         action={signIn}
       >
         <label className="text-md" htmlFor="username">
@@ -134,10 +134,6 @@ export default async function Login({
           Sign Up
         </button>
 
-        <div>
-          <OAuthWithDiscord />
-          <OAuthWithGithub />
-        </div>
 
 
         {searchParams?.message && (
@@ -146,6 +142,10 @@ export default async function Login({
           </p>
         )}
       </form>
+      <div className='flex justify-center w-full'>
+        <OAuthWithDiscord />
+        <OAuthWithGithub />
+      </div>
     </div>
   )
 }
