@@ -3,70 +3,70 @@ import { createClient } from '@/utils/supabase/server'
 import { redirect } from 'next/navigation'
 import OAuthWithDiscord from '../_components/oauthbutton'
 import OAuthWithGithub from '../_components/oauthgithub'
+import { signIn, signUp } from '../_components/loginactions'
 
 
-
-export default async function Login({
+export default function Login({
   searchParams,
 }: {
   searchParams: { message: string }
 }) {
 
-  const signIn = async (formData: FormData) => {
-    'use server';
+  // const signIn = async (formData: FormData) => {
+  //   'use server';
 
-    const email = formData.get('email') as string
-    const password = formData.get('password') as string
-    const username = formData.get('username') as string
-    const cookieStore = cookies()
-    const supabase = createClient(cookieStore)
+  //   const email = formData.get('email') as string
+  //   const password = formData.get('password') as string
+  //   const username = formData.get('username') as string
+  //   const cookieStore = cookies()
+  //   const supabase = createClient(cookieStore)
 
-    const { error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    })
+  //   const { error } = await supabase.auth.signInWithPassword({
+  //     email,
+  //     password,
+  //   })
 
-    if (error) {
-      return redirect('/login?message=Could not authenticate user')
-    }
+  //   if (error) {
+  //     return redirect('/login?message=Could not authenticate user')
+  //   }
 
-    return redirect('/')
-  }
+  //   return redirect('/')
+  // }
 
-  const signUp = async (formData: FormData) => {
-    'use server';
+  // const signUp = async (formData: FormData) => {
+  //   'use server';
 
-    const cookieStore = cookies()
-    const supabase = createClient(cookieStore)
+  //   const cookieStore = cookies()
+  //   const supabase = createClient(cookieStore)
 
-    const origin = headers().get('origin')
-    const email = formData.get('email') as string
-    const password = formData.get('password') as string
-    const username = formData.get('username') as string
-    const { data: user } = await supabase.from('users').select('*').eq('username', username).single()
+  //   const origin = headers().get('origin')
+  //   const email = formData.get('email') as string
+  //   const password = formData.get('password') as string
+  //   const username = formData.get('username') as string
+  //   const { data: user } = await supabase.from('users').select('*').eq('username', username).single()
 
-    const { error } = await supabase.auth.signUp({
-      email,
-      password,
-      options: {
-        data: {
-          username,
-        },
-        emailRedirectTo: `${origin}/auth/callback`,
-      },
-    })
+  //   const { error } = await supabase.auth.signUp({
+  //     email,
+  //     password,
+  //     options: {
+  //       data: {
+  //         username,
+  //       },
+  //       emailRedirectTo: `${origin}/auth/callback`,
+  //     },
+  //   })
 
-    if (user) {
-      return redirect('/login?message=Username already taken')
-    }
+  //   if (user) {
+  //     return redirect('/login?message=Username already taken')
+  //   }
 
-    if (error) {
-      console.log(error)
-      return redirect('/login?message=Could not authenticate user')
-    }
+  //   if (error) {
+  //     console.log(error)
+  //     return redirect('/login?message=Could not authenticate user')
+  //   }
 
-    return redirect('/login?message=Check email to continue sign in process')
-  }
+  //   return redirect('/login?message=Check email to continue sign in process')
+  // }
 
 
   return (
