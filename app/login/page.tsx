@@ -3,6 +3,22 @@ import OAuthWithDiscord from '../_components/oauthbutton'
 import OAuthWithGithub from '../_components/oauthgithub'
 import { signIn, signUp } from '../_components/loginactions'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../_components/ui/tabs"
+import * as z from 'zod'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { useForm } from 'react-hook-form'
+import {
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "../_components/ui/form"
+import { Input } from "../_components/ui/input"
+import { signinFormSchema, signupFormSchema } from '../_components/schemas'
+
+
 
 export default function Login({
   searchParams,
@@ -10,35 +26,85 @@ export default function Login({
   searchParams: { message: string }
 }) {
 
+  const signinForm = useForm<z.infer<typeof signinFormSchema>>({
+    resolver: zodResolver(signinFormSchema),
+    defaultValues: {
+        email: '',
+        password: '',
+    }
+  })
+
+  const signupForm = useForm<z.infer<typeof signupFormSchema>>({
+    resolver: zodResolver(signupFormSchema),
+    defaultValues: {
+        username: '',
+        email: '',
+        password: '',
+    }
+  })
+
+  function onSignin(values: z.infer<typeof signinFormSchema>) {
+    // Do something with the form values.
+    // ✅ This will be type-safe and validated.
+    signIn(values)
+  }
+
+  function onSignup(values: z.infer<typeof signupFormSchema>) {
+    // Do something with the form values.
+    // ✅ This will be type-safe and validated.
+
+    signUp(values)
+  }
+
   return (
     <div className="flex-1 flex flex-col w-full sm:max-w-lg px-8 gap-2 place-content-center">
-      {/* <Link
-        href="/"
-        className="absolute left-8 top-8 py-2 px-4 rounded-md no-underline text-foreground bg-btn-background hover:bg-btn-background-hover flex items-center group text-sm"
-      >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="24"
-          height="24"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          className="mr-2 h-4 w-4 transition-transform group-hover:-translate-x-1"
-        >
-          <polyline points="15 18 9 12 15 6" />
-        </svg>{' '}
-        Back
-      </Link> */}
       <Tabs defaultValue="Signin" className="">
         <TabsList>
           <TabsTrigger value="Signin">Sign In</TabsTrigger>
           <TabsTrigger value="Signup">Sign Up</TabsTrigger>
         </TabsList>
       <TabsContent value="Signin">
-        <form
+      <Form {...signinForm}>
+            <form onSubmit={signinForm.handleSubmit(onSignin)} className="space-y-8">
+                <FormField
+                control={signinForm.control}
+                name="email"
+                render={({ field }) => (
+                    <FormItem>
+                    <FormLabel>email</FormLabel>
+                    <FormControl>
+                        <Input placeholder="put your email here!" {...field} />
+                    </FormControl>
+                    {/* <FormDescription>
+                        This is your public display name.
+                    </FormDescription> */}
+                    <FormMessage />
+                    </FormItem>
+                )}
+                />
+                <FormField
+                control={signinForm.control}
+                name="password"
+                render={({ field }) => (
+                    <FormItem>
+                    <FormLabel>password</FormLabel>
+                    <FormControl>
+                        <Input type='password' placeholder="••••••••" {...field} />
+                    </FormControl>
+                    {/* <FormDescription>
+                        This is your public display name.
+                    </FormDescription> */}
+                    <FormMessage />
+                    </FormItem>
+                )}
+                />
+
+                <button className="bg-green-700 rounded-md px-4 py-2 text-foreground mb-2 w-full hover:bg-green-600">
+                  Sign In
+                </button>
+              </form>
+            </Form>
+        {/* <form
           className="animate-in flex flex-col w-full justify-center gap-2 text-foreground"
           action={signIn}
         >
@@ -72,10 +138,66 @@ export default function Login({
               {searchParams.message}
             </p>
           )}
-        </form>
+        </form> */}
       </TabsContent>
       <TabsContent value="Signup">
-      <form
+      <Form {...signupForm}>
+            <form onSubmit={signupForm.handleSubmit(onSignup)} className="space-y-8">
+                <FormField
+                control={signupForm.control}
+                name="username"
+                render={({ field }) => (
+                    <FormItem>
+                    <FormLabel>username</FormLabel>
+                    <FormControl>
+                        <Input placeholder="awesome username" {...field} />
+                    </FormControl>
+                    {/* <FormDescription>
+                        This is your public display name.
+                    </FormDescription> */}
+                    <FormMessage />
+                    </FormItem>
+                )}
+                />
+                <FormField
+                control={signupForm.control}
+                name="email"
+                render={({ field }) => (
+                    <FormItem>
+                    <FormLabel>email</FormLabel>
+                    <FormControl>
+                        <Input placeholder="put your email here" {...field} />
+                    </FormControl>
+                    {/* <FormDescription>
+                        This is your public display name.
+                    </FormDescription> */}
+                    <FormMessage />
+                    </FormItem>
+                )}
+                />
+                <FormField
+                  control={signupForm.control}
+                  name="password"
+                  render={({ field }) => (
+                    <FormItem>
+                    <FormLabel>password</FormLabel>
+                    <FormControl>
+                        <Input type='password' placeholder="••••••••" {...field} />
+                    </FormControl>
+                    <FormDescription>
+                        Password must be at least 8 characters long and contain at least 1 uppercase, 1 lowercase, 1 number, and 1 special character
+                    </FormDescription>
+                    <FormMessage />
+                    </FormItem>
+                )}
+                />
+                <button className="flex items-center justify-center border border-foreground/20 w-full rounded-md px-4 py-2 text-foreground mb-2 hover:bg-btn-background-hover"
+                >
+                  Sign Up
+                </button>
+              </form>
+            </Form>
+      {/* <form
           className="animate-in flex flex-col w-full justify-center gap-2 text-foreground"
           action={signUp}
         >
@@ -119,73 +241,19 @@ export default function Login({
               {searchParams.message}
             </p>
           )}
-        </form>
+        </form> */}
       </TabsContent>
-        {/* <TabsContent value="account">Make changes to your account here.</TabsContent>
-        <TabsContent value="password">Change your password here.</TabsContent> */}
       </Tabs>
       <div className='flex justify-center w-full'>
         <OAuthWithDiscord />
         <OAuthWithGithub />
       </div>
-
+      {searchParams?.message && (
+            <p className="mt-4 p-4 bg-foreground/10 text-foreground text-center">
+              {searchParams.message}
+            </p>
+          )}
 
     </div>
   )
 }
-
-  // const signIn = async (formData: FormData) => {
-  //   'use server';
-
-  //   const email = formData.get('email') as string
-  //   const password = formData.get('password') as string
-  //   const username = formData.get('username') as string
-  //   const cookieStore = cookies()
-  //   const supabase = createClient(cookieStore)
-
-  //   const { error } = await supabase.auth.signInWithPassword({
-  //     email,
-  //     password,
-  //   })
-
-  //   if (error) {
-  //     return redirect('/login?message=Could not authenticate user')
-  //   }
-
-  //   return redirect('/')
-  // }
-
-  // const signUp = async (formData: FormData) => {
-  //   'use server';
-
-  //   const cookieStore = cookies()
-  //   const supabase = createClient(cookieStore)
-
-  //   const origin = headers().get('origin')
-  //   const email = formData.get('email') as string
-  //   const password = formData.get('password') as string
-  //   const username = formData.get('username') as string
-  //   const { data: user } = await supabase.from('users').select('*').eq('username', username).single()
-
-  //   const { error } = await supabase.auth.signUp({
-  //     email,
-  //     password,
-  //     options: {
-  //       data: {
-  //         username,
-  //       },
-  //       emailRedirectTo: `${origin}/auth/callback`,
-  //     },
-  //   })
-
-  //   if (user) {
-  //     return redirect('/login?message=Username already taken')
-  //   }
-
-  //   if (error) {
-  //     console.log(error)
-  //     return redirect('/login?message=Could not authenticate user')
-  //   }
-
-  //   return redirect('/login?message=Check email to continue sign in process')
-  // }
