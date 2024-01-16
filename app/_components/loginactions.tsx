@@ -39,7 +39,7 @@ export async function signUp(values: z.infer<typeof signupFormSchema>) {
   const password = values.password as string
   const username = values.username as string
   console.log(email, password, username, origin)
-  // const { data: user } = await supabase.from('users').select('*').eq('username', username).single()
+  const { data: user } = await supabase.from('users').select('*').eq('username', username).single()
 
   const { error } = await supabase.auth.signUp({
     email,
@@ -52,12 +52,15 @@ export async function signUp(values: z.infer<typeof signupFormSchema>) {
     },
   })
 
-  // if (user) {
-  //   return redirect('/login?message=Username already taken')
-  // }
+  if (user) {
+    return redirect('/login?message=Username already taken')
+  }
 
   if (error) {
-    console.log(error)
+    console.log(error, "this is the error message")
+    if (error.status === 422) {
+      return redirect('/login?message=check password complexity')
+    }
     return redirect('/login?message=Could not authenticate user')
   }
 
