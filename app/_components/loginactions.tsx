@@ -2,6 +2,8 @@
 import { createClient } from '@/utils/supabase/server'
 import { redirect } from 'next/navigation';
 import { headers, cookies } from 'next/headers'
+import { formSchema } from '../post/page';
+import { z } from 'zod';
 
 
 export async function signIn(formData: FormData) {
@@ -17,7 +19,7 @@ export async function signIn(formData: FormData) {
       email,
       password,
     })
-    
+
     if (error) {
       return redirect('/login?message=Could not authenticate user')
     }
@@ -59,4 +61,16 @@ export async function signUp(formData: FormData) {
   }
 
   return redirect('/login?message=Check email to continue sign in process')
+}
+
+export async function createPost(values: z.infer<typeof formSchema>) {
+  'use server'
+
+  const cookieStore = cookies()
+  const supabase = createClient(cookieStore)
+  const title = values.title
+  const magnet = values.magnet
+  const description = values.description
+
+  console.log(title, magnet, description)
 }
