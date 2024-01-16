@@ -93,26 +93,13 @@ export default function Login({
   function onSignin(values: z.infer<typeof signinFormSchema>) {
     // Do something with the form values.
     // ✅ This will be type-safe and validated.
-    console.log(values)
     signIn(values)
   }
 
   function onSignup(values: z.infer<typeof signupFormSchema>) {
     // Do something with the form values.
     // ✅ This will be type-safe and validated.
-    console.log("hit the function")
-    try {
-      const parsedData = signupFormSchema.safeParse(values)
-      console.log("parsed data", parsedData)
-      console.log("raw data", values)
-    } catch (err) {
-      if (err instanceof z.ZodError) {
-        console.log(err.message)
-      } else {
-        console.log(err)
-      }
-    }
-    console.log(values, "values")
+
     signUp(values)
   }
 
