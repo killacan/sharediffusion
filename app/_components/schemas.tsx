@@ -1,5 +1,17 @@
 import * as z from 'zod'
 
+export const upadeProfileSchema = z.object({
+    username: z.string().min(2, {
+        message: 'Username must be at least 2 characters long'
+    }),
+    email: z.string().email({
+        message: 'Please enter a valid email address'
+    }),
+    description: z.string(),
+    profile_image: z.string(),
+
+})
+
 export const formSchema = z.object({
     title: z.string().min(2, {
         message: 'Title must be at least 2 characters long'
