@@ -2,7 +2,7 @@
 import { createClient } from '@/utils/supabase/server'
 import { redirect } from 'next/navigation';
 import { headers, cookies } from 'next/headers'
-import { formSchema } from '../post/page';
+import { formSchema } from './schemas';
 import { signinFormSchema, signupFormSchema } from './schemas' 
 import { z } from 'zod';
 

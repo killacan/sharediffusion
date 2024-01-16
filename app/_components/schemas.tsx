@@ -1,5 +1,14 @@
 import * as z from 'zod'
 
+export const formSchema = z.object({
+    title: z.string().min(2, {
+        message: 'Title must be at least 2 characters long'
+    }),
+    magnet: z.string(),
+    description: z.string(),
+
+})
+
 export const signinFormSchema = z.object({
     email: z.string().email({
         message: 'Please enter a valid email address'
