@@ -57,13 +57,13 @@ export default function Login({
   }
 
   return (
-    <div className="flex-1 flex flex-col w-full sm:max-w-lg px-8 gap-2 place-content-center">
+    <div className="flex-1 flex flex-col w-full sm:max-w-lg gap-2 place-content-center animate-in">
       <Tabs defaultValue="Signin" className="">
         <TabsList>
           <TabsTrigger value="Signin">Sign In</TabsTrigger>
           <TabsTrigger value="Signup">Sign Up</TabsTrigger>
         </TabsList>
-      <TabsContent value="Signin">
+      <TabsContent value="Signin" className='animate-in'>
       <Form {...signinForm}>
             <form onSubmit={signinForm.handleSubmit(onSignin)} className="space-y-8">
                 <FormField
@@ -104,43 +104,12 @@ export default function Login({
                 </button>
               </form>
             </Form>
-        {/* <form
-          className="animate-in flex flex-col w-full justify-center gap-2 text-foreground"
-          action={signIn}
-        >
-          <label className="text-md" htmlFor="email">
-            Email
-          </label>
-          <input
-            className="rounded-md px-4 py-2 bg-inherit border mb-6"
-            name="email"
-            placeholder="you@example.com"
-            required
-          />
-          <label className="text-md" htmlFor="password">
-            Password
-          </label>
-          <input
-            className="rounded-md px-4 py-2 bg-inherit border mb-6"
-            type="password"
-            name="password"
-            placeholder="••••••••"
-            required
-          />
-          <button className="bg-green-700 rounded-md px-4 py-2 text-foreground mb-2 hover:bg-green-600">
-            Sign In
-          </button>
-
-
-
-          {searchParams?.message && (
-            <p className="mt-4 p-4 bg-foreground/10 text-foreground text-center">
-              {searchParams.message}
-            </p>
-          )}
-        </form> */}
+            <div className='flex justify-center w-full gap-2'>
+              <OAuthWithDiscord />
+              <OAuthWithGithub />
+            </div>
       </TabsContent>
-      <TabsContent value="Signup">
+      <TabsContent value="Signup" className='animate-in'>
       <Form {...signupForm}>
             <form onSubmit={signupForm.handleSubmit(onSignup)} className="space-y-8">
                 <FormField
@@ -197,62 +166,18 @@ export default function Login({
                 </button>
               </form>
             </Form>
-      {/* <form
-          className="animate-in flex flex-col w-full justify-center gap-2 text-foreground"
-          action={signUp}
-        >
-          <label className="text-md" htmlFor="username">
-            Username
-          </label>
-          <input
-            className="rounded-md px-4 py-2 bg-inherit border mb-6"
-            name="username"
-            placeholder="FrankTheTanks69420"
-            required
-          />
-          <label className="text-md" htmlFor="email">
-            Email
-          </label>
-          <input
-            className="rounded-md px-4 py-2 bg-inherit border mb-6"
-            name="email"
-            placeholder="you@example.com"
-            required
-          />
-          <label className="text-md" htmlFor="password">
-            Password
-          </label>
-          <input
-            className="rounded-md px-4 py-2 bg-inherit border mb-6"
-            type="password"
-            name="password"
-            placeholder="••••••••"
-            required
-          />
-          <button className="flex items-center justify-center border border-foreground/20 rounded-md px-4 py-2 text-foreground mb-2 hover:bg-btn-background-hover"
-          >
-            Sign Up
-          </button>
-
-
-
-          {searchParams?.message && (
-            <p className="mt-4 p-4 bg-foreground/10 text-foreground text-center">
-              {searchParams.message}
-            </p>
-          )}
-        </form> */}
+            <div className='flex justify-center w-full gap-2'>
+              <OAuthWithDiscord />
+              <OAuthWithGithub />
+            </div>
       </TabsContent>
       </Tabs>
-      <div className='flex justify-center w-full'>
-        <OAuthWithDiscord />
-        <OAuthWithGithub />
-      </div>
+
       {searchParams?.message && (
-            <p className="mt-4 p-4 bg-foreground/10 text-foreground text-center">
-              {searchParams.message}
-            </p>
-          )}
+        <p className="mt-4 p-4 bg-foreground/10 text-foreground text-center">
+          {searchParams.message}
+        </p>
+      )}
 
     </div>
   )

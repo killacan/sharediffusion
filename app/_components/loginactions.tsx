@@ -2,7 +2,7 @@
 import { createClient } from '@/utils/supabase/server'
 import { redirect } from 'next/navigation';
 import { headers, cookies } from 'next/headers'
-import { formSchema } from './schemas';
+import { createPostSchema } from './schemas';
 import { signinFormSchema, signupFormSchema } from './schemas' 
 import { z } from 'zod';
 
@@ -67,7 +67,7 @@ export async function signUp(values: z.infer<typeof signupFormSchema>) {
   return redirect('/login?message=Check email to continue sign in process')
 }
 
-export async function createPost(values: z.infer<typeof formSchema>) {
+export async function createPost(values: z.infer<typeof createPostSchema>) {
   'use server'
 
   const cookieStore = cookies()
@@ -75,6 +75,44 @@ export async function createPost(values: z.infer<typeof formSchema>) {
   const title = values.title
   const magnet = values.magnet
   const description = values.description
+  const version = values.version
+
+  const { data: user, error } = await supabase.auth.getUser()
+
+  if (error || !user) {
+    return redirect('/login?message=must be logged in to create a post')
+  }
+
+  const {data: postData, error: postError } = await supabase.from('posts').insert([
+    {
+      title,
+      description,
+      user_id: user.user.id,
+    },
+  ]).select()
+
+  if (postError || !postData) {
+    console.log(postError)
+    return redirect('/createpost?message=Could not create post')
+  }
+
+  console.log(postData, "this is some post data")
+
+  const { error: postVersionError } = await supabase.from('versions').insert([
+    {
+      version_magnet: magnet,
+      name: version,
+      post_id: postData[0].post_id,
+      user_id: user.user.id,
+    },
+  ])
+
+  if (postVersionError) {
+    console.log(postVersionError)
+    return redirect('/createpost?message=Could not create post (version error)')
+  }
 
   console.log(title, magnet, description)
+  return redirect('/createpost')
+
 }
