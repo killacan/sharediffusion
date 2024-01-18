@@ -28,13 +28,11 @@ export default async function ProfilePage({ params: { username } }: { params: { 
             </div>
         )
     }
-    const dataUsername: string = data.username
-    
+    // const dataUsername: string = data.username
+    let dataDescription: string = ''
     if (data.description) {
-        const dataDescription: string = data.description
-    } else {
-        const dataDescription: string = ''
-    }
+        dataDescription = data.description
+    } 
     
     console.log(data, error)
 
@@ -43,7 +41,7 @@ export default async function ProfilePage({ params: { username } }: { params: { 
             <div className="animate-in flex-1 flex flex-col gap-3 opacity-0 max-w-4xl px-3">
             <h1 className="text-3xl font-bold">Profile</h1>
                 {<p>Username: {data.username}</p>}
-                {<p>Description: {data.description}</p>}
+                {<p>Description: {dataDescription}</p>}
 
             </div>
         </div>

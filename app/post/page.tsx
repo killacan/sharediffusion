@@ -28,6 +28,7 @@ export default function PostAModel() {
         defaultValues: {
             title: '',
             magnet: '',
+            description: '',
         }
     })
 
@@ -36,11 +37,12 @@ export default function PostAModel() {
         // ✅ This will be type-safe and validated.
         createPost(values)
         console.log(values)
+        form.reset()
       }
 
 
     return (
-        <div className="flex-1 flex flex-col w-full sm:max-w-lg px-8 gap-2 place-content-center">
+        <div className="flex-1 flex flex-col w-full sm:max-w-lg px-8 py-8 gap-2 place-content-center">
             <h1 className="text-3xl font-bold">Post A Model</h1>
             <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
