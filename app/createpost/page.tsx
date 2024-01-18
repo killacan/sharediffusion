@@ -77,7 +77,7 @@ export default function PostAModel({
                 name="version"
                 render={({ field }) => (
                     <FormItem>
-                    <FormLabel>Version</FormLabel>
+                    <FormLabel>Initial Version</FormLabel>
                     <FormControl>
                         <Input placeholder="what version of your model is this?" {...field} />
                     </FormControl>
