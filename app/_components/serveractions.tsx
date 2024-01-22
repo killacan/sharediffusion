@@ -116,3 +116,19 @@ export async function createPost(values: z.infer<typeof createPostSchema>) {
   return redirect('/createpost')
 
 }
+
+export async function getModels() {
+  'use server'
+
+  const cookieStore = cookies()
+  const supabase = createClient(cookieStore)
+
+  const { data, error } = await supabase.from('posts').select('*')
+
+  if (error) {
+    return redirect('/models?message=Could not get models')
+  }
+
+  return data
+}
+

@@ -1,7 +1,7 @@
 'use client'
 import OAuthWithDiscord from '../_components/oauthbutton'
 import OAuthWithGithub from '../_components/oauthgithub'
-import { signIn, signUp } from '../_components/loginactions'
+import { signIn, signUp } from '../_components/serveractions'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../_components/ui/tabs"
 import * as z from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'

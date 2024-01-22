@@ -1,11 +1,8 @@
 import AuthButton from '../../components/AuthButton'
 import { createClient } from '@/utils/supabase/server'
 import { cookies } from 'next/headers'
-import Link from 'next/link'
 import LinkComponent from './link'
-import { create } from 'zustand'
-import { useEffect } from 'react'
-import { User } from '@supabase/supabase-js'
+
 
 export default async function Nav() {
 

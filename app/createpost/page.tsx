@@ -1,10 +1,9 @@
 'use client'
 
-import { createPost } from "../_components/loginactions"
+import { createPost } from "../_components/serveractions"
 import * as z from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
-import { Button } from "../_components/ui/button"
 import {
     Form,
     FormControl,
