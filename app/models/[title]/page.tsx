@@ -83,21 +83,21 @@ export default async function Post({ params: { title } }: { params: { title: str
     return (
         <div className="flex-1 w-full flex flex-col gap-20 items-center">
             <div className="animate-in flex-1 flex flex-col gap-3 opacity-0 max-w-4xl px-3">
-                <div className='flex '>
-                    <div className='border border-white w-96 h-96'>
+                <div className='flex gap-3'>
+                    <div className='border border-white w-96 h-96 text-center rounded-md'>
                         <p> Img / Imgs will go here.</p>
                     </div>
-                    <div>
-                        <h1 className="text-3xl font-bold">{data.title}</h1>
-                        <p>Post</p>
+                    <div className='w-72 border border-gray-500 rounded-md'>
+                        <h1 className="text-3xl font-bold text-center">{data.title}</h1>
                         {versions.data && <Select defaultValue={`${versions?.data[0].name}`}>
-                        <SelectTrigger className="w-[180px]">
-                            <SelectValue placeholder='Please Select'/>
-                        </SelectTrigger>
-                        <SelectContent>
-                            {selectionBuilder(versions)}
-                        </SelectContent>
+                            <SelectTrigger className="w-[180px]">
+                                <SelectValue placeholder='Please Select'/>
+                            </SelectTrigger>
+                            <SelectContent>
+                                {selectionBuilder(versions)}
+                            </SelectContent>
                         </Select>}
+                        <p></p>
                     </div>
 
                 </div>

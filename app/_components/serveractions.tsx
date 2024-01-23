@@ -76,6 +76,7 @@ export async function createPost(values: z.infer<typeof createPostSchema>) {
   const magnet = values.magnet
   const description = values.description
   const version = values.version
+  const version_desc = values.version_desc
 
   const { data: user, error } = await supabase.auth.getUser()
 
@@ -104,6 +105,7 @@ export async function createPost(values: z.infer<typeof createPostSchema>) {
       name: version,
       post_id: postData[0].post_id,
       user_id: user.user.id,
+      version_desc,
     },
   ])
 

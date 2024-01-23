@@ -33,6 +33,7 @@ export default function PostAModel({
             magnet: '',
             description: '',
             version: '',
+            version_desc: '',
         }
     })
 
@@ -79,6 +80,22 @@ export default function PostAModel({
                     <FormLabel>Initial Version</FormLabel>
                     <FormControl>
                         <Input placeholder="what version of your model is this?" {...field} />
+                    </FormControl>
+                    {/* <FormDescription>
+                        This is your public display name.
+                    </FormDescription> */}
+                    <FormMessage />
+                    </FormItem>
+                )}
+                />
+                <FormField
+                control={form.control}
+                name="version_desc"
+                render={({ field }) => (
+                    <FormItem>
+                    <FormLabel>Version Description</FormLabel>
+                    <FormControl>
+                        <Textarea placeholder="Describe this version, or what is unique about this version" {...field} />
                     </FormControl>
                     {/* <FormDescription>
                         This is your public display name.

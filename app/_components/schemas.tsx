@@ -19,6 +19,7 @@ export const createPostSchema = z.object({
     magnet: z.string(),
     description: z.string(),
     version: z.string(),
+    version_desc: z.string(),
 
 })
 
