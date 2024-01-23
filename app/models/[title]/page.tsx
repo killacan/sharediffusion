@@ -11,15 +11,13 @@ import {
     SelectValue,
   } from "../../_components/ui/select"
 import { PostgrestSingleResponse } from '@supabase/postgrest-js'
+import VersionSelect from '@/app/_components/versionSelect'
 
 export const revalidate = 120
 
-interface Versions {
-    error: any,
-    data: [Version]
-}
 
-interface Version {
+
+export interface Version {
     version_id: number,
     post_id: number,
     version_magnet: string,
@@ -89,14 +87,7 @@ export default async function Post({ params: { title } }: { params: { title: str
                     </div>
                     <div className='w-72 border border-gray-500 rounded-md'>
                         <h1 className="text-3xl font-bold text-center">{data.title}</h1>
-                        {versions.data && <Select defaultValue={`${versions?.data[0].name}`}>
-                            <SelectTrigger className="w-[180px]">
-                                <SelectValue placeholder='Please Select'/>
-                            </SelectTrigger>
-                            <SelectContent>
-                                {selectionBuilder(versions)}
-                            </SelectContent>
-                        </Select>}
+                        <VersionSelect versions={versions} />
                         <p></p>
                     </div>
 
