@@ -58,26 +58,6 @@ export default async function Post({ params: { title } }: { params: { title: str
 
     }
 
-    const selectionBuilder = (versions: PostgrestSingleResponse<any[]>) => {
-        console.log(versions, "this is the version")
-
-
-        if (!versions.data) {
-            return (
-                <SelectItem value="No Versions">No Versions</SelectItem>
-            )
-        }
-
-        let selectionItems = versions.data.map((version: Version) => (
-            <SelectItem value={`${version.name}`}>{version.name}</SelectItem>
-        ))
-
-        return selectionItems
-    }
-
-    // console.log(version)
-
-
     return (
         <div className="flex-1 w-full flex flex-col gap-20 items-center">
             <div className="animate-in flex-1 flex flex-col gap-3 opacity-0 max-w-4xl px-3">

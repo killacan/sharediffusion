@@ -22,19 +22,19 @@ export default function VersionSelect({ versions }: { versions: PostgrestSingleR
         <SelectItem key={index} value={`${index}`}>{version.name}</SelectItem>
     ))
 
-    console.log(selectedVersion)
+    console.log(versions.data[selectedVersion], "this is the versions data", selectedVersion)
 
     return (
         <div className="flex flex-col gap-3">
             {versions.data && <Select onValueChange={(e) => setSelectedVersion(parseInt(e))} defaultValue={`${0}`}>
-                <SelectTrigger className="w-[180px]">
+                <SelectTrigger className="w-[180px] mx-auto my-3">
                     <SelectValue placeholder='Please Select'/>
                 </SelectTrigger>
                 <SelectContent>
                     {selectionItems}
                 </SelectContent>
             </Select>}
-            <p>{versions.data[selectedVersion].description}</p>
+            <p>{versions.data[selectedVersion].version_desc}</p>
         </div>
     )
 }
