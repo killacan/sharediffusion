@@ -29,15 +29,13 @@ export default async function Post({ params: { title } }: { params: { title: str
         userData = await supabase.from('users').select('username, description, profile_pic').eq('user_id', data.user_id).single()
         console.log(userData)
     }
-    if (error) {
-        console.log(error)
-    }
+
     let versions
     if (userData) {
         versions = await supabase.from('versions').select('*').eq('post_id', data.post_id)
     }
 
-    if (!data || !userData || error || !versions) {
+    if (!data || !userData?.data || error || !versions) {
         return (
             <div className="flex-1 w-full flex flex-col gap-20 items-center">
                 <div className="animate-in flex-1 flex flex-col gap-3 opacity-0 max-w-4xl px-3">
@@ -48,19 +46,26 @@ export default async function Post({ params: { title } }: { params: { title: str
 
     }
 
+    console.log(data, "this is the data")
     return (
         <div className="flex-1 w-full flex flex-col gap-20 items-center">
             <div className="animate-in flex-1 flex flex-col gap-3 opacity-0 max-w-4xl px-3">
-                <div className='flex gap-3'>
+                <div className='flex gap-3 pt-12'>
                     <div className='border border-white w-96 h-96 text-center rounded-md'>
                         <p> Img / Imgs will go here.</p>
                     </div>
-                    <div className='w-72 border border-gray-500 rounded-md'>
-                        <h1 className="text-3xl font-bold text-center">{data.title}</h1>
+                    <div className='grid grid-rows-[70px_1fr_50px] w-72 border border-gray-500 rounded-md p-4'>
+                        <h1 className="text-3xl font-bold">{data.title}</h1>
                         <VersionSelect versions={versions} />
-                        <p></p>
+                        <h2 className='text-xl font-bold mt-auto text-center'>
+                            uploaded by: {userData.data.username}
+                        </h2>
                     </div>
 
+                </div>
+                <div>
+                    <h2>Description: </h2>
+                    <p>{data.description}</p>
                 </div>
             </div>
         </div>

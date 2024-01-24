@@ -27,7 +27,7 @@ export default function VersionSelect({ versions }: { versions: PostgrestSingleR
     return (
         <div className="flex flex-col gap-3">
             {versions.data && <Select onValueChange={(e) => setSelectedVersion(parseInt(e))} defaultValue={`${0}`}>
-                <SelectTrigger className="w-[180px] mx-auto my-3">
+                <SelectTrigger className="w-[180px] my-3">
                     <SelectValue placeholder='Please Select'/>
                 </SelectTrigger>
                 <SelectContent>
