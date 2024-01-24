@@ -1,16 +1,6 @@
 // this page is going to be for grabbing an individual post and displaying it.
 import { createClient } from '@/utils/supabase/server'
-import { headers, cookies } from 'next/headers'
-import Link from 'next/link'
-import { redirect } from 'next/navigation'
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-  } from "../../_components/ui/select"
-import { PostgrestSingleResponse } from '@supabase/postgrest-js'
+import { cookies } from 'next/headers'
 import VersionSelect from '@/app/_components/versionSelect'
 
 export const revalidate = 120
