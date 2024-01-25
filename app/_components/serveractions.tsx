@@ -119,7 +119,7 @@ export async function createPost(values: z.infer<typeof createPostSchema>) {
 
 }
 
-export async function updatePost(values: z.infer<typeof updateVersionFormSchema>, post: number, user_id: string, title: string) {
+export async function updateVersion(values: z.infer<typeof updateVersionFormSchema>, post: number, user_id: string, title: string) {
   'use server'
 
   const cookieStore = cookies()
@@ -148,7 +148,8 @@ export async function updatePost(values: z.infer<typeof updateVersionFormSchema>
     return redirect('/models?message=Could not update post (version error)')
   }
 
-  return redirect(`/models/${title}?message=Post updated successfully`)
+  return redirect(`/models/${title}?message=Version updated successfully`)
 
 }
+
 

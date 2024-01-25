@@ -18,7 +18,7 @@ import {
 import FormButton from "../_components/ui/formButton"
 import { Textarea } from "../_components/ui/textarea"
 import { updateVersionFormSchema } from "./schemas"
-import { updatePost } from "./serveractions"
+import { updateVersion } from "./serveractions"
 import { selectedVersionStore } from "./selectedversion"
 import { useSearchParams } from "next/navigation"
 
@@ -53,7 +53,7 @@ export default function UpdateModelForm({title}: {title: string}) {
         const post = version.post_id
         const user = version.user_id
         if (post && user) {
-            updatePost(values, post, user, title)
+            updateVersion(values, post, user, title)
         } else {
             console.log("something went wrong")
         }
@@ -62,15 +62,17 @@ export default function UpdateModelForm({title}: {title: string}) {
       function onAddVersion(values: z.infer<typeof updateVersionFormSchema>) {
         // Do something with the form values.
         // ✅ This will be type-safe and validated.
-    
+        const post = version.post_id
+        const user = version.user_id
         // signUp(values)
       }
 
     return (
         <Tabs defaultValue="Signin" className="">
         <TabsList>
-          <TabsTrigger value="Signin">Update</TabsTrigger>
-          <TabsTrigger value="Signup">New</TabsTrigger>
+          <TabsTrigger value="Signin">Update Version</TabsTrigger>
+          <TabsTrigger value="Signup">New Version</TabsTrigger>
+          <TabsTrigger value="UpdateModel">Update Model</TabsTrigger>
         </TabsList>
         <TabsContent value="Signin" className='animate-in'>
         <Form {...updateVersionForm}>
@@ -178,6 +180,11 @@ export default function UpdateModelForm({title}: {title: string}) {
                 )}
                 />
                 <FormButton >Add New</FormButton>
+                {message && (
+                    <p className="mt-4 p-4 bg-foreground/10 text-foreground text-center">
+                    {message}
+                    </p>
+                )}
               </form>
             </Form>
         </TabsContent>
