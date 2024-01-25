@@ -19,7 +19,7 @@ export default async function Models() {
   }
 
   if (data) {
-    console.log(data)
+    // console.log(data)
   }
 
   return (

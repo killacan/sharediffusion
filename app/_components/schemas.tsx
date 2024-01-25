@@ -16,6 +16,8 @@ export const updateVersionFormSchema = z.object({
     version_magnet: z.string().url(),
     name: z.string(),
     version_desc: z.string(),
+    post_id: z.number().optional(),
+    user_id: z.string().optional(),
 })
 
 export const updatePostSchema = z.object({

@@ -41,7 +41,7 @@ export default function PostAModel({
         // Do something with the form values.
         // ✅ This will be type-safe and validated.
         createPost(values)
-        console.log(values)
+        // console.log(values)
         form.reset()
       }
 

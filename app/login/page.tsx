@@ -170,7 +170,7 @@ export default function Login({
             {/* <div className='flex justify-center w-full gap-2'>
               <OAuthWithDiscord />
               <OAuthWithGithub />
-            </div> */}
+            </div> */} 
       </TabsContent>
       </Tabs>
 

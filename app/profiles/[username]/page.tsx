@@ -34,7 +34,7 @@ export default async function ProfilePage({ params: { username } }: { params: { 
         dataDescription = data.description
     } 
     
-    console.log(data, error)
+    // console.log(data, error)
 
     return (
         <div className="flex-1 w-full flex flex-col gap-20 items-center">

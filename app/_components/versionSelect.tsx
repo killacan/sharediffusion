@@ -9,9 +9,20 @@ import {
   } from "../_components/ui/select"
 import { PostgrestSingleResponse } from '@supabase/postgrest-js'
 import { Version } from "../models/[title]/page"
-import { useState } from "react"
+import { useState, useEffect } from "react"
+import { create } from "zustand"
+import { set } from "zod"
+import { selectedVersionStore } from "./selectedversion"
 
 export default function VersionSelect({ versions }: { versions: PostgrestSingleResponse<any[]> }) {
+
+    if (!versions.data) {
+        return <p>error getting versions info</p>
+    }
+
+    const version = selectedVersionStore(state => state)
+
+    // console.log(selectedVersionStore, "selected version store")
 
     if (!versions.data) {
         return <p>error getting versions info</p>
@@ -22,9 +33,26 @@ export default function VersionSelect({ versions }: { versions: PostgrestSingleR
         <SelectItem key={index} value={`${index}`}>{version.name}</SelectItem>
     ))
 
+    const transformState = (e: number) => {
+        console.log(e, "e")
+        const versionData = versions.data[e]
+        version.setSelectedVersion(versionData)
+        console.log(versionData, "version data", version)
+        setSelectedVersion(e)
+    }
+
+    useEffect(() => {
+      version.setSelectedVersion(versions.data[0])
+    
+      return () => {
+        
+      }
+    }, [])
+    
+
     return (
         <div className="flex flex-col gap-3">
-            {versions.data && <Select onValueChange={(e) => setSelectedVersion(parseInt(e))} defaultValue={`${0}`}>
+            {versions.data && <Select onValueChange={(e) => transformState(parseInt(e))} defaultValue={`${0}`}>
                 <SelectTrigger className="w-[180px] my-3">
                     <SelectValue placeholder='Please Select'/>
                 </SelectTrigger>

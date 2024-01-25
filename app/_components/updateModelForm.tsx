@@ -15,16 +15,26 @@ import {
   FormLabel,
   FormMessage,
 } from "@/app/_components/ui/form"
+import FormButton from "../_components/ui/formButton"
+import { Textarea } from "../_components/ui/textarea"
 import { updateVersionFormSchema } from "./schemas"
+import { updatePost } from "./serveractions"
+import { selectedVersionStore } from "./selectedversion"
+import { useSearchParams } from "next/navigation"
 
-export default function UpdateModelForm() {
+export default function UpdateModelForm({title}: {title: string}) {
+
+    const searchParams = useSearchParams()
+    const message = searchParams.get('message')
+    const version = selectedVersionStore(state => state.selectedVersion)
+    console.log(version, "version in update model form")
 
     const updateVersionForm = useForm<z.infer<typeof updateVersionFormSchema>>({
         resolver: zodResolver(updateVersionFormSchema),
         defaultValues: {
-            version_magnet: '',
-            version_desc: '',
-            name: '',
+            version_magnet: version.version_magnet,
+            version_desc: version.version_desc,
+            name: version.name,
         }
       })
     
@@ -37,36 +47,55 @@ export default function UpdateModelForm() {
         }
       })
     
-      function onSignin(values: z.infer<typeof updateVersionFormSchema>) {
+      function onUpdateVersion(values: z.infer<typeof updateVersionFormSchema>) {
         // Do something with the form values.
         // ✅ This will be type-safe and validated.
-        signIn(values)
+        const post = version.post_id
+        const user = version.user_id
+        if (post && user) {
+            updatePost(values, post, user, title)
+        } else {
+            console.log("something went wrong")
+        }
       }
     
-      function onSignup(values: z.infer<typeof signupFormSchema>) {
+      function onAddVersion(values: z.infer<typeof updateVersionFormSchema>) {
         // Do something with the form values.
         // ✅ This will be type-safe and validated.
     
-        signUp(values)
+        // signUp(values)
       }
 
     return (
         <Tabs defaultValue="Signin" className="">
         <TabsList>
-          <TabsTrigger value="Signin">Sign In</TabsTrigger>
-          <TabsTrigger value="Signup">Sign Up</TabsTrigger>
+          <TabsTrigger value="Signin">Update</TabsTrigger>
+          <TabsTrigger value="Signup">New</TabsTrigger>
         </TabsList>
-      <TabsContent value="Signin" className='animate-in'>
-      <Form {...signinForm}>
-            <form onSubmit={signinForm.handleSubmit(onSignin)} className="space-y-8">
-                <FormField
-                control={signinForm.control}
-                name="email"
+        <TabsContent value="Signin" className='animate-in'>
+        <Form {...updateVersionForm}>
+            <form onSubmit={updateVersionForm.handleSubmit(onUpdateVersion)} className="space-y-8">
+            <FormField
+                control={updateVersionForm.control}
+                name="name"
                 render={({ field }) => (
                     <FormItem>
-                    <FormLabel>email</FormLabel>
+                    <FormLabel>Version Name</FormLabel>
                     <FormControl>
-                        <Input placeholder="put your email here!" {...field} />
+                        <Input placeholder="awesome Name Here here" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                    </FormItem>
+                )}
+                />
+                <FormField
+                control={updateVersionForm.control}
+                name="version_desc"
+                render={({ field }) => (
+                    <FormItem>
+                    <FormLabel>Version Description</FormLabel>
+                    <FormControl>
+                        <Textarea placeholder="Describe this version, or what is unique about this version" {...field} />
                     </FormControl>
                     {/* <FormDescription>
                         This is your public display name.
@@ -76,13 +105,13 @@ export default function UpdateModelForm() {
                 )}
                 />
                 <FormField
-                control={signinForm.control}
-                name="password"
+                control={updateVersionForm.control}
+                name="version_magnet"
                 render={({ field }) => (
                     <FormItem>
-                    <FormLabel>password</FormLabel>
+                    <FormLabel>Magnet Link</FormLabel>
                     <FormControl>
-                        <Input type='password' placeholder="••••••••" {...field} />
+                        <Input placeholder="put your magnet link here" {...field} />
                     </FormControl>
                     {/* <FormDescription>
                         This is your public display name.
@@ -91,28 +120,39 @@ export default function UpdateModelForm() {
                     </FormItem>
                 )}
                 />
-
-                <button className="bg-green-700 rounded-md px-4 py-2 text-foreground mb-2 w-full hover:bg-green-600">
-                  Sign In
-                </button>
+                <FormButton >Update</FormButton>
+                {message && (
+                    <p className="mt-4 p-4 bg-foreground/10 text-foreground text-center">
+                    {message}
+                    </p>
+                )}
               </form>
             </Form>
-            <div className='flex justify-center w-full gap-2'>
-              <OAuthWithDiscord />
-              <OAuthWithGithub />
-            </div>
-      </TabsContent>
-      <TabsContent value="Signup" className='animate-in'>
-      <Form {...signupForm}>
-            <form onSubmit={signupForm.handleSubmit(onSignup)} className="space-y-8">
-                <FormField
-                control={signupForm.control}
-                name="username"
+        </TabsContent>
+        <TabsContent value="Signup" className='animate-in'>
+      <Form {...addNewVersionForm}>
+            <form onSubmit={addNewVersionForm.handleSubmit(onAddVersion)} className="space-y-8">
+            <FormField
+                control={addNewVersionForm.control}
+                name="name"
                 render={({ field }) => (
                     <FormItem>
-                    <FormLabel>username</FormLabel>
+                    <FormLabel>Version Name</FormLabel>
                     <FormControl>
-                        <Input placeholder="awesome username" {...field} />
+                        <Input placeholder="awesome Name Here here" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                    </FormItem>
+                )}
+                />
+                <FormField
+                control={addNewVersionForm.control}
+                name="version_desc"
+                render={({ field }) => (
+                    <FormItem>
+                    <FormLabel>Version Description</FormLabel>
+                    <FormControl>
+                        <Textarea placeholder="Describe this version, or what is unique about this version" {...field} />
                     </FormControl>
                     {/* <FormDescription>
                         This is your public display name.
@@ -122,13 +162,13 @@ export default function UpdateModelForm() {
                 )}
                 />
                 <FormField
-                control={signupForm.control}
-                name="email"
+                control={addNewVersionForm.control}
+                name="version_magnet"
                 render={({ field }) => (
                     <FormItem>
-                    <FormLabel>email</FormLabel>
+                    <FormLabel>Magnet Link</FormLabel>
                     <FormControl>
-                        <Input placeholder="put your email here" {...field} />
+                        <Input placeholder="put your magnet link here" {...field} />
                     </FormControl>
                     {/* <FormDescription>
                         This is your public display name.
@@ -137,33 +177,10 @@ export default function UpdateModelForm() {
                     </FormItem>
                 )}
                 />
-                <FormField
-                  control={signupForm.control}
-                  name="password"
-                  render={({ field }) => (
-                    <FormItem>
-                    <FormLabel>password</FormLabel>
-                    <FormControl>
-                        <Input type='password' placeholder="••••••••" {...field} />
-                    </FormControl>
-                    <FormDescription>
-                        Password must be at least 8 characters long and contain at least 1 uppercase, 1 lowercase, 1 number, and 1 special character
-                    </FormDescription>
-                    <FormMessage />
-                    </FormItem>
-                )}
-                />
-                <button className="flex items-center justify-center border border-foreground/20 w-full rounded-md px-4 py-2 text-foreground mb-2 hover:bg-btn-background-hover"
-                >
-                  Sign Up
-                </button>
+                <FormButton >Add New</FormButton>
               </form>
             </Form>
-            <div className='flex justify-center w-full gap-2'>
-              <OAuthWithDiscord />
-              <OAuthWithGithub />
-            </div>
-      </TabsContent>
-      </Tabs>
+        </TabsContent>
+        </Tabs>
     )
 }

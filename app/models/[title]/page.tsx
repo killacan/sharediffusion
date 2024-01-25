@@ -30,6 +30,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/app/_components/ui/form"
+import UpdateModelForm from '@/app/_components/updateModelForm'
 
 
 export const revalidate = 120
@@ -50,15 +51,16 @@ export default async function Post({ params: { title } }: { params: { title: str
 
     const {
         data: { user },
-      } = await supabase.auth.getUser()
+    } = await supabase.auth.getUser()
 
-    const { data, error } = await supabase.from('posts').select('*').eq('title', title.replaceAll('%20', ' ')).single()
+    const cleanTitle = title.replaceAll('%20', ' ')
+    const { data, error } = await supabase.from('posts').select('*').eq('title', cleanTitle).single()
 
     let userData
 
     if (data) {
         userData = await supabase.from('users').select('username, description, profile_pic').eq('user_id', data.user_id).single()
-        console.log(userData)
+        // console.log(userData)
     }
 
     let versions
@@ -108,9 +110,9 @@ export default async function Post({ params: { title } }: { params: { title: str
                             <DialogContent>
                                 <DialogHeader>
                                 <DialogTitle>Update Your Model</DialogTitle>
-                                <DialogDescription>
-                                
-                                </DialogDescription>
+                                {/* <DialogDescription> */}
+                                {/* </DialogDescription> */}
+                                    <UpdateModelForm title={cleanTitle} />
                                 </DialogHeader>
                             </DialogContent>
                         </Dialog>
