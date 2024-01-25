@@ -152,4 +152,40 @@ export async function updateVersion(values: z.infer<typeof updateVersionFormSche
 
 }
 
+export async function addVersion(values: z.infer<typeof updateVersionFormSchema>, post: number, user_id: string, title: string) {
+  'use server'
 
+  const cookieStore = cookies()
+  const supabase = createClient(cookieStore)
+  const version_magnet = values.version_magnet
+  const name = values.name
+  const version_desc = values.version_desc
+  const post_id = post
+
+  const { data: user, error } = await supabase.auth.getUser()
+
+  if (error || !user) {
+    return redirect('/login?message=must be logged in to create a post')
+  }
+
+  if (user.user?.id !== user_id) {
+    return redirect('/models?message=You do not have permission to add a version to this model')
+  }
+
+  const { error: postVersionError } = await supabase.from('versions').insert([
+    {
+      version_magnet,
+      name,
+      post_id,
+      user_id: user.user.id,
+      version_desc,
+    },
+  ])
+
+  if (postVersionError) {
+    console.log(postVersionError)
+    return redirect('/models?message=Could not add version to post')
+  }
+
+  return redirect(`/models/${title}?message=Version added successfully`)
+}

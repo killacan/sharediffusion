@@ -18,7 +18,7 @@ import {
 import FormButton from "../_components/ui/formButton"
 import { Textarea } from "../_components/ui/textarea"
 import { updateVersionFormSchema } from "./schemas"
-import { updateVersion } from "./serveractions"
+import { updateVersion, addVersion } from "./serveractions"
 import { selectedVersionStore } from "./selectedversion"
 import { useSearchParams } from "next/navigation"
 
@@ -64,7 +64,11 @@ export default function UpdateModelForm({title}: {title: string}) {
         // ✅ This will be type-safe and validated.
         const post = version.post_id
         const user = version.user_id
-        // signUp(values)
+        if (post && user) {
+            addVersion(values, post, user, title)
+        } else {
+            console.log("something went wrong")
+        }
       }
 
     return (
