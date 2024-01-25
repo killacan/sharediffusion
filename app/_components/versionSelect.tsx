@@ -52,14 +52,17 @@ export default function VersionSelect({ versions }: { versions: PostgrestSingleR
 
     return (
         <div className="flex flex-col gap-3">
-            {versions.data && <Select onValueChange={(e) => transformState(parseInt(e))} defaultValue={`${0}`}>
-                <SelectTrigger className="w-[180px] my-3">
-                    <SelectValue placeholder='Please Select'/>
-                </SelectTrigger>
-                <SelectContent>
-                    {selectionItems}
-                </SelectContent>
-            </Select>}
+            <div>
+                <p>Version:</p>
+                {versions.data && <Select onValueChange={(e) => transformState(parseInt(e))} defaultValue={`${0}`}>
+                    <SelectTrigger className="w-[180px] mb-3">
+                        <SelectValue placeholder='Please Select'/>
+                    </SelectTrigger>
+                    <SelectContent>
+                        {selectionItems}
+                    </SelectContent>
+                </Select>}
+            </div>
             <p>{versions.data[selectedVersion].version_desc}</p>
         </div>
     )
