@@ -1,8 +1,8 @@
 'use client'
-import OAuthWithDiscord from '../_components/oauthbutton'
-import OAuthWithGithub from '../_components/oauthgithub'
-import { signIn, signUp } from '../_components/serveractions'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "../_components/ui/tabs"
+
+import { Input } from "@/app/_components/ui/input"
+import { Label } from "@/app/_components/ui/label"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/app/_components/ui/tabs"
 import * as z from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
@@ -14,52 +14,44 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "../_components/ui/form"
-import { Input } from "../_components/ui/input"
-import { signinFormSchema, signupFormSchema } from '../_components/schemas'
+} from "@/app/_components/ui/form"
+import { updateVersionFormSchema } from "./schemas"
 
+export default function UpdateModelForm() {
 
+    const updateVersionForm = useForm<z.infer<typeof updateVersionFormSchema>>({
+        resolver: zodResolver(updateVersionFormSchema),
+        defaultValues: {
+            version_magnet: '',
+            version_desc: '',
+            name: '',
+        }
+      })
+    
+      const addNewVersionForm = useForm<z.infer<typeof updateVersionFormSchema>>({
+        resolver: zodResolver(updateVersionFormSchema),
+        defaultValues: {
+            version_magnet: '',
+            version_desc: '',
+            name: '',
+        }
+      })
+    
+      function onSignin(values: z.infer<typeof updateVersionFormSchema>) {
+        // Do something with the form values.
+        // ✅ This will be type-safe and validated.
+        signIn(values)
+      }
+    
+      function onSignup(values: z.infer<typeof signupFormSchema>) {
+        // Do something with the form values.
+        // ✅ This will be type-safe and validated.
+    
+        signUp(values)
+      }
 
-export default function Login({
-  searchParams,
-}: {
-  searchParams: { message: string }
-}) {
-
-  const signinForm = useForm<z.infer<typeof signinFormSchema>>({
-    resolver: zodResolver(signinFormSchema),
-    defaultValues: {
-        email: '',
-        password: '',
-    }
-  })
-
-  const signupForm = useForm<z.infer<typeof signupFormSchema>>({
-    resolver: zodResolver(signupFormSchema),
-    defaultValues: {
-        username: '',
-        email: '',
-        password: '',
-    }
-  })
-
-  function onSignin(values: z.infer<typeof signinFormSchema>) {
-    // Do something with the form values.
-    // ✅ This will be type-safe and validated.
-    signIn(values)
-  }
-
-  function onSignup(values: z.infer<typeof signupFormSchema>) {
-    // Do something with the form values.
-    // ✅ This will be type-safe and validated.
-
-    signUp(values)
-  }
-
-  return (
-    <div className="flex-1 flex flex-col w-full sm:max-w-lg gap-2 place-content-center animate-in">
-      <p>Website is in pre-alpha, Sign Up is currently disabled.  </p>
-      <Tabs defaultValue="Signin" className="">
+    return (
+        <Tabs defaultValue="Signin" className="">
         <TabsList>
           <TabsTrigger value="Signin">Sign In</TabsTrigger>
           <TabsTrigger value="Signup">Sign Up</TabsTrigger>
@@ -161,25 +153,17 @@ export default function Login({
                     </FormItem>
                 )}
                 />
-                {/* <button className="flex items-center justify-center border border-foreground/20 w-full rounded-md px-4 py-2 text-foreground mb-2 hover:bg-btn-background-hover"
+                <button className="flex items-center justify-center border border-foreground/20 w-full rounded-md px-4 py-2 text-foreground mb-2 hover:bg-btn-background-hover"
                 >
                   Sign Up
-                </button> */}
+                </button>
               </form>
             </Form>
-            {/* <div className='flex justify-center w-full gap-2'>
+            <div className='flex justify-center w-full gap-2'>
               <OAuthWithDiscord />
               <OAuthWithGithub />
-            </div> */}
+            </div>
       </TabsContent>
       </Tabs>
-
-      {searchParams?.message && (
-        <p className="mt-4 p-4 bg-foreground/10 text-foreground text-center">
-          {searchParams.message}
-        </p>
-      )}
-
-    </div>
-  )
+    )
 }

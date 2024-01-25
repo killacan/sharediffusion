@@ -12,6 +12,20 @@ export const upadeProfileSchema = z.object({
 
 })
 
+export const updateVersionFormSchema = z.object({
+    version_magnet: z.string().url(),
+    name: z.string(),
+    version_desc: z.string(),
+})
+
+export const updatePostSchema = z.object({
+    title: z.string().min(2, {
+        message: 'Title must be at least 2 characters long'
+    }),
+    magnet: z.string(),
+    description: z.string(),
+})
+
 export const createPostSchema = z.object({
     title: z.string().min(2, {
         message: 'Title must be at least 2 characters long'

@@ -22,8 +22,6 @@ export default function VersionSelect({ versions }: { versions: PostgrestSingleR
         <SelectItem key={index} value={`${index}`}>{version.name}</SelectItem>
     ))
 
-    console.log(versions.data[selectedVersion], "this is the versions data", selectedVersion)
-
     return (
         <div className="flex flex-col gap-3">
             {versions.data && <Select onValueChange={(e) => setSelectedVersion(parseInt(e))} defaultValue={`${0}`}>
