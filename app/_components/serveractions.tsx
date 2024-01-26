@@ -2,7 +2,7 @@
 import { createClient } from '@/utils/supabase/server'
 import { redirect } from 'next/navigation';
 import { headers, cookies } from 'next/headers'
-import { createPostSchema } from './schemas';
+import { createPostSchema, updatePostSchema } from './schemas';
 import { signinFormSchema, signupFormSchema, updateVersionFormSchema } from './schemas' 
 import { z } from 'zod';
 
@@ -188,4 +188,28 @@ export async function addVersion(values: z.infer<typeof updateVersionFormSchema>
   }
 
   return redirect(`/models/${title}?message=Version added successfully`)
+}
+
+export async function updatePost(values: z.infer<typeof updatePostSchema>) {
+  'use server' 
+
+  const cookieStore = cookies()
+  const supabase = createClient(cookieStore)
+  const title = values.title
+  const description = values.description
+
+  const { data: user, error } = await supabase.auth.getUser()
+
+  if (error || !user) {
+    return redirect('/login?message=must be logged in to update a post')
+  }
+
+  const { error: postVersionError } = await supabase.from('posts').update({title, description}).eq('user_id', user.user.id).eq('title', title)
+
+  if (postVersionError) {
+    console.log(postVersionError)
+    return redirect('/models?message=Could not update post')
+  }
+
+  return redirect(`/models/${title}?message=Model Post updated successfully`)
 }

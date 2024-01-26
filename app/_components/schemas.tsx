@@ -24,7 +24,6 @@ export const updatePostSchema = z.object({
     title: z.string().min(2, {
         message: 'Title must be at least 2 characters long'
     }),
-    magnet: z.string(),
     description: z.string(),
 })
 

@@ -17,17 +17,17 @@ import {
 } from "@/app/_components/ui/form"
 import FormButton from "../_components/ui/formButton"
 import { Textarea } from "../_components/ui/textarea"
-import { updateVersionFormSchema } from "./schemas"
-import { updateVersion, addVersion } from "./serveractions"
+import { updateVersionFormSchema, updatePostSchema } from "./schemas"
+import { updateVersion, addVersion, updatePost } from "./serveractions"
 import { selectedVersionStore } from "./selectedversion"
 import { useSearchParams } from "next/navigation"
 
-export default function UpdateModelForm({title}: {title: string}) {
+export default function UpdateModelForm({title, desc}: {title: string, desc: string}) {
 
     const searchParams = useSearchParams()
     const message = searchParams.get('message')
     const version = selectedVersionStore(state => state.selectedVersion)
-    console.log(version, "version in update model form")
+    // console.log(version, "version in update model form")
 
     const updateVersionForm = useForm<z.infer<typeof updateVersionFormSchema>>({
         resolver: zodResolver(updateVersionFormSchema),
@@ -36,18 +36,26 @@ export default function UpdateModelForm({title}: {title: string}) {
             version_desc: version.version_desc,
             name: version.name,
         }
-      })
+    })
     
-      const addNewVersionForm = useForm<z.infer<typeof updateVersionFormSchema>>({
+    const addNewVersionForm = useForm<z.infer<typeof updateVersionFormSchema>>({
         resolver: zodResolver(updateVersionFormSchema),
         defaultValues: {
             version_magnet: '',
             version_desc: '',
             name: '',
         }
-      })
+    })
+
+    const updatePostForm = useForm<z.infer<typeof updatePostSchema>>({
+        resolver: zodResolver(updatePostSchema),
+        defaultValues: {
+            title: title,
+            description: desc,
+        }
+    })
     
-      function onUpdateVersion(values: z.infer<typeof updateVersionFormSchema>) {
+    function onUpdateVersion(values: z.infer<typeof updateVersionFormSchema>) {
         // Do something with the form values.
         // ✅ This will be type-safe and validated.
         const post = version.post_id
@@ -57,9 +65,9 @@ export default function UpdateModelForm({title}: {title: string}) {
         } else {
             console.log("something went wrong")
         }
-      }
+    }
     
-      function onAddVersion(values: z.infer<typeof updateVersionFormSchema>) {
+    function onAddVersion(values: z.infer<typeof updateVersionFormSchema>) {
         // Do something with the form values.
         // ✅ This will be type-safe and validated.
         const post = version.post_id
@@ -69,7 +77,13 @@ export default function UpdateModelForm({title}: {title: string}) {
         } else {
             console.log("something went wrong")
         }
-      }
+    }
+
+    function onUpdatePost(values: z.infer<typeof updatePostSchema>) {
+        // Do something with the form values.
+        // ✅ This will be type-safe and validated.
+        updatePost(values)
+    }
 
     return (
         <Tabs defaultValue="Signin" className="">
@@ -190,6 +204,50 @@ export default function UpdateModelForm({title}: {title: string}) {
                     </p>
                 )}
               </form>
+            </Form>
+        </TabsContent>
+        <TabsContent value="UpdateModel" className='animate-in'>
+        <Form {...updatePostForm}>
+            <form onSubmit={updatePostForm.handleSubmit(onUpdatePost)} className="space-y-8">
+                <FormField
+                control={updatePostForm.control}
+                name="title"
+                render={({ field }) => (
+                    <FormItem>
+                    <FormLabel>title</FormLabel>
+                    <FormControl>
+                        <Input placeholder="awesome title here" {...field} />
+                    </FormControl>
+                    {/* <FormDescription>
+                        This is your public display name.
+                    </FormDescription> */}
+                    <FormMessage />
+                    </FormItem>
+                )}
+                />
+                <FormField
+                control={updatePostForm.control}
+                name="description"
+                render={({ field }) => (
+                    <FormItem>
+                    <FormLabel>Description</FormLabel>
+                    <FormControl>
+                        <Textarea placeholder="describe your model here" {...field} />
+                    </FormControl>
+                    {/* <FormDescription>
+                        This is your public display name.
+                    </FormDescription> */}
+                    <FormMessage />
+                    </FormItem>
+                )}
+                />
+                <FormButton >Submit</FormButton>
+                {message && (
+                    <p className="mt-4 p-4 bg-foreground/10 text-foreground text-center">
+                    {message}
+                    </p>
+                )}
+            </form>
             </Form>
         </TabsContent>
         </Tabs>

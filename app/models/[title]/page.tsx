@@ -112,7 +112,7 @@ export default async function Post({ params: { title } }: { params: { title: str
                                 <DialogTitle>Update Your Model</DialogTitle>
                                 {/* <DialogDescription> */}
                                 {/* </DialogDescription> */}
-                                    <UpdateModelForm title={cleanTitle} />
+                                    <UpdateModelForm title={cleanTitle} desc={data.description} />
                                 </DialogHeader>
                             </DialogContent>
                         </Dialog>
