@@ -213,3 +213,27 @@ export async function updatePost(values: z.infer<typeof updatePostSchema>) {
 
   return redirect(`/models/${title}?message=Model Post updated successfully`)
 }
+
+export async function deletePost(title: string) {
+  'use server'
+
+  const cookieStore = cookies()
+  const supabase = createClient(cookieStore)
+
+  const { data: user, error } = await supabase.auth.getUser()
+
+  if (error || !user) {
+    return redirect('/login?message=must be logged in to delete a post')
+  }
+
+  console.log(title, user.user.id, "this is the title and user id")
+
+  const { error: postVersionError } = await supabase.from('posts').delete().eq('user_id', user.user.id).eq('title', title)
+
+  if (postVersionError) {
+    console.log(postVersionError)
+    return redirect('/models?message=Could not delete post')
+  }
+
+  return redirect(`/models?message=Model Post deleted successfully`)
+}

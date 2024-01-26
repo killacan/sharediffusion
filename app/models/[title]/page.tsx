@@ -31,6 +31,7 @@ import {
   FormMessage,
 } from "@/app/_components/ui/form"
 import UpdateModelForm from '@/app/_components/updateModelForm'
+import DeleteButton from '@/app/_components/deleteButton'
 
 
 export const revalidate = 120
@@ -116,7 +117,21 @@ export default async function Post({ params: { title } }: { params: { title: str
                                 </DialogHeader>
                             </DialogContent>
                         </Dialog>
-                            <button className='bg-red-500 flex items-center justify-center border border-foreground/20 rounded-md px-4 py-2 text-foreground my-2 w-1/2 hover:bg-red-400'>Delete</button>
+                        <Dialog>
+                            <DialogTrigger className='bg-red-500 flex items-center justify-center border border-foreground/20 rounded-md px-4 py-2 text-foreground my-2 w-1/2 hover:bg-red-400'>Delete</DialogTrigger>
+                            <DialogContent>
+                                <DialogHeader>
+                                <DialogTitle>Delete Your Model</DialogTitle>
+                                <DialogDescription>
+                                    Are you sure you want to delete this model? This action cannot be undone.
+                                </DialogDescription>
+                                <DialogFooter>
+                                    <DialogClose className='bg-green-700 flex items-center justify-center border border-foreground/20 rounded-md px-4 py-2 text-foreground my-2 w-1/2 hover:bg-green-600'>Cancel</DialogClose>
+                                    <DeleteButton title={cleanTitle} />
+                                </DialogFooter>
+                                </DialogHeader>
+                            </DialogContent>
+                        </Dialog>
                         </div>
                     </div>}
 
