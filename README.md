@@ -34,9 +34,9 @@ The project is currently in the planning stages, and the roadmap will be updated
 
 - [x] Create a basic UI mockup
 - [x] Create basic user authentication / login system
-- [ ] Improve user authentication( send less requests to Supabase)
-- [ ] Create create basic user profile page/dashboard
-- [ ] Create an edit for user profile page
 - [x] Create posting system for models
 - [ ] Create posting system for images
+- [ ] Create basic user profile page/dashboard
+- [ ] Create an edit for user profile page
+- [ ] Improve user authentication( send less requests to Supabase)
 - [ ] Create Donation Page
