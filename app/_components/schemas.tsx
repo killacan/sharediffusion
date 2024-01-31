@@ -27,6 +27,16 @@ export const updatePostSchema = z.object({
     description: z.string(),
 })
 
+const maxFileSize = 1024 * 1024 * 5 // 5MB
+
+function checkFileType(file: File) {
+    if (file?.name) {
+        const fileType = file.name.split(".").pop();
+        if (fileType === "png" || fileType === "jpg") return true;
+    }
+    return false;
+}
+
 export const createPostSchema = z.object({
     title: z.string().min(2, {
         message: 'Title must be at least 2 characters long'
@@ -35,7 +45,9 @@ export const createPostSchema = z.object({
     description: z.string(),
     version: z.string(),
     version_desc: z.string(),
-
+    file: z.any().optional()
+    // .refine((file) => file.size < maxFileSize, "File must be less than 5MB" )
+    // .refine((file) => checkFileType(file), "File must be a .png or .jpg"),
 })
 
 export const signinFormSchema = z.object({

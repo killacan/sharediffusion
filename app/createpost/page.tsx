@@ -17,14 +17,17 @@ import { Input } from "../_components/ui/input"
 import FormButton from "../_components/ui/formButton"
 import { Textarea } from "../_components/ui/textarea"
 import { createPostSchema } from '../_components/schemas'
-
-
+import Image from "next/image"
+import { useState } from "react"
+import { twMerge } from "tailwind-merge"
 
 export default function PostAModel({
     searchParams,
   }: {
     searchParams: { message: string }
   }) {
+
+    const [file, setFile] = useState<File | undefined>(undefined)
 
     const form = useForm<z.infer<typeof createPostSchema>>({
         resolver: zodResolver(createPostSchema),
@@ -34,16 +37,25 @@ export default function PostAModel({
             description: '',
             version: '',
             version_desc: '',
+            file: undefined,
         }
     })
 
     function onSubmit(values: z.infer<typeof createPostSchema>) {
         // Do something with the form values.
         // ✅ This will be type-safe and validated.
-        createPost(values)
-        // console.log(values)
+        // createPost(values)
+        if (file) {
+            values.file = file
+        }
+        console.log(values)
         form.reset()
-      }
+    }
+
+    function handleFileChange(event: React.ChangeEvent<HTMLInputElement>) {
+        setFile(event.target.files?.[0])
+
+    }
 
 
     return (
@@ -129,6 +141,31 @@ export default function PostAModel({
                     <FormControl>
                         <Textarea placeholder="describe your model here" {...field} />
                     </FormControl>
+                    {/* <FormDescription>
+                        This is your public display name.
+                    </FormDescription> */}
+                    <FormMessage />
+                    </FormItem>
+                )}
+                />
+                <FormField
+                control={form.control}
+                name="file"
+                render={({ field }) => (
+                    <FormItem>
+                    <FormLabel>Upload an Img</FormLabel>
+                    <FormControl>
+                        <Input id="file" type="file" onChange={handleFileChange}/>
+                    </FormControl>
+                    {file && (
+                        <Image
+                        src={URL.createObjectURL(file)}
+                        alt="file preview"
+                        width={200}
+                        height={200}
+                        className={twMerge(`rounded-md`)}
+                        />
+                    )}
                     {/* <FormDescription>
                         This is your public display name.
                     </FormDescription> */}
