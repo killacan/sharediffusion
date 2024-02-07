@@ -14,8 +14,7 @@ Here's the tech stack chosen for building Sharediffusion:
 - **Typescript:** Enhancing code quality and maintainability with strong typing.
 - **NextJS:** A React framework for building server-rendered applications.
 - **Supabase:** An open-source alternative to Firebase, providing a scalable backend.
-
-The choice of image hosting service is still under consideration, and decisions will be made based on practical considerations during the development process.
+- **Backblaze B2:** A cloud storage provider for hosting models and images.
 
 As the project is in the early planning stages, many details are subject to change as it progresses toward a production version.
 
@@ -35,8 +34,13 @@ The project is currently in the planning stages, and the roadmap will be updated
 - [x] Create a basic UI mockup
 - [x] Create basic user authentication / login system
 - [x] Create posting system for models
+- [x] Img uploads to Backblaze B2
 - [ ] Create posting system for images
+- [ ] Pictures page for uploaded pictures
 - [ ] Create basic user profile page/dashboard
 - [ ] Create an edit for user profile page
+- [ ] Add Tags to models
+- [ ] Add Tags to images
 - [ ] Improve user authentication( send less requests to Supabase)
 - [ ] Create Donation Page
+- [ ] Create a search bar for models
