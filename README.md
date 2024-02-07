@@ -39,6 +39,8 @@ The project is currently in the planning stages, and the roadmap will be updated
 - [ ] Pictures page for uploaded pictures
 - [ ] Create basic user profile page/dashboard
 - [ ] Create an edit for user profile page
+- [ ] Review TOS and Privacy Policy
+- [ ] OPEN ALPHA
 - [ ] Add Tags to models
 - [ ] Add Tags to images
 - [ ] Improve user authentication( send less requests to Supabase)
