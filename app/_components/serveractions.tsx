@@ -5,7 +5,26 @@ import { headers, cookies } from 'next/headers'
 import { createPostSchema, updatePostSchema } from './schemas';
 import { signinFormSchema, signupFormSchema, updateVersionFormSchema } from './schemas' 
 import { z } from 'zod';
+// import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
+// import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
+import B2 from 'backblaze-b2';
 
+// const b2 = new S3Client({
+//   endpoint: 'https://s3.us-west-004.backblazeb2.com',
+//   region: 'us-west-004',
+//   credentials: {
+//     accessKeyId: process.env.BACKBLAZE_KEY_ID!,
+//     secretAccessKey: process.env.BACKBLAZE_APP_KEY!,
+//   },
+// })
+
+const b2 = new B2({
+  applicationKeyId: process.env.BACKBLAZE_TEST_APP_KEY_ID!, // or accountId: 'accountId'
+  applicationKey: process.env.BACKBLAZE_TEST_APP_KEY! // or masterApplicationKey
+});
+
+const bucket = 'sharediffusion-img-test'
+const bucketId = process.env.BACKBLAZE_TEST_BUCKET_ID!
 
 export async function signIn(values: z.infer<typeof signinFormSchema>) {
     'use server';
@@ -236,4 +255,57 @@ export async function deletePost(title: string) {
   }
 
   return redirect(`/models?message=Model Post deleted successfully`)
+}
+
+type SignedURLResponse = {
+  failure?: undefined;
+  success: {
+      url: string;
+      authorizationToken: string;
+  };
+} | {
+  failure: string;
+  success?: undefined;
+};
+
+export async function getSignedURL(): Promise<SignedURLResponse>{
+  'use server' 
+
+  const cookieStore = cookies()
+  const supabase = createClient(cookieStore)
+
+  const { data: user, error } = await supabase.auth.getUser()
+
+  if (error || !user) {
+    return { failure: 'must be logged in to create a post' }
+  }
+
+  let uploadURL
+
+  try {
+    await b2.authorize({
+      // ...common arguments (optional)
+    }); 
+    uploadURL = await b2.getUploadUrl({
+      bucketId: bucketId,
+    })
+    console.log(bucketId, "this is the bucket id")
+  } catch (error) {
+    console.log(error, "this is the error")
+    return { failure: 'Could not authenticate user' }
+  }
+
+  console.log(uploadURL.data.uploadUrl, "this is the upload url")
+
+
+  // const putObjectCommand = new PutObjectCommand({
+  //   Bucket: bucket,
+  //   Key: `test-file`,
+  // })
+  // // need to update this so that I fetch tbe Backblaze url instead of the amazon one.
+  // const signedURL = await getSignedUrl(b2, putObjectCommand, { expiresIn: 60 })
+  
+  return { success: { url: uploadURL.data.uploadUrl, authorizationToken: uploadURL.data.authorizationToken } }
+
+
 }

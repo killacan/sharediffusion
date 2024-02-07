@@ -1,6 +1,6 @@
 'use client'
 
-import { createPost } from "../_components/serveractions"
+import { createPost, getSignedURL } from "../_components/serveractions"
 import * as z from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
@@ -41,15 +41,50 @@ export default function PostAModel({
         }
     })
 
-    function onSubmit(values: z.infer<typeof createPostSchema>) {
-        // Do something with the form values.
-        // ✅ This will be type-safe and validated.
-        // createPost(values)
+    async function onSubmit(values: z.infer<typeof createPostSchema>) {
         if (file) {
-            values.file = file
+            // Attach the file to the form values
+            values.file = file;
+            const fileContent = await file.arrayBuffer();
+    
+            // Get the signed URL for uploading the file
+            const signedURLResult = await getSignedURL();
+    
+            if (signedURLResult.failure || !signedURLResult.success) {
+                console.log(signedURLResult.failure);
+            } else {
+                const signedURL = signedURLResult.success.url;
+                const hashBuffer = await crypto.subtle.digest('SHA-1', fileContent);
+                const hashArray = Array.from(new Uint8Array(hashBuffer));
+                const hashHex = hashArray
+                    .map((b) => b.toString(16).padStart(2, "0"))
+                    .join("");
+                // Upload the file using the signed URL
+                try {
+                    const response = await fetch(signedURL, {
+                        method: 'POST',
+                        mode: 'cors',
+                        body: file, // File object
+                        headers: {
+                            'Content-Type': file.type, // Mime type of the file
+                            'authorization': signedURLResult.success.authorizationToken,
+                            "X-Bz-File-Name": file.name,
+                            "X-Bz-Content-Sha1": hashHex,
+                        }
+                    });
+    
+                    if (response.ok) {
+                        console.log('File uploaded successfully!');
+                    } else {
+                        console.error('Failed to upload file:', response.statusText);
+                    }
+                } catch (error) {
+                    console.error('Error uploading file:', error);
+                }
+            }
         }
-        console.log(values)
-        form.reset()
+    
+        console.log(values);
     }
 
     function handleFileChange(event: React.ChangeEvent<HTMLInputElement>) {
