@@ -1,6 +1,6 @@
 'use client'
 
-import { createPost, getSignedURL } from "../_components/serveractions"
+import { createPost, getSignedURL, createImg } from "../_components/serveractions"
 import * as z from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
@@ -20,6 +20,7 @@ import { createPostSchema } from '../_components/schemas'
 import Image from "next/image"
 import { useState } from "react"
 import { twMerge } from "tailwind-merge"
+import { create } from "domain"
 
 export default function PostAModel({
     searchParams,
@@ -41,14 +42,21 @@ export default function PostAModel({
         }
     })
 
+    const generateFileName = (bytes = 32) => {
+        const array = new Uint8Array(bytes);
+        crypto.getRandomValues(array);
+        return Array.from(array, (byte) => byte.toString(16).padStart(2, "0")).join("");
+    }
+
     async function onSubmit(values: z.infer<typeof createPostSchema>) {
         if (file) {
             // Attach the file to the form values
-            values.file = file;
+            // values.file = file;
+            let postId = await createPost(values)
             const fileContent = await file.arrayBuffer();
-    
+            
             // Get the signed URL for uploading the file
-            const signedURLResult = await getSignedURL();
+            const signedURLResult = await getSignedURL(file.type, file.size);
     
             if (signedURLResult.failure || !signedURLResult.success) {
                 console.log(signedURLResult.failure);
@@ -61,6 +69,8 @@ export default function PostAModel({
                     .join("");
                 // Upload the file using the signed URL
                 try {
+                    const name = generateFileName()
+                    
                     const response = await fetch(signedURL, {
                         method: 'POST',
                         mode: 'cors',
@@ -68,10 +78,14 @@ export default function PostAModel({
                         headers: {
                             'Content-Type': file.type, // Mime type of the file
                             'authorization': signedURLResult.success.authorizationToken,
-                            "X-Bz-File-Name": file.name,
+                            "X-Bz-File-Name": name,
                             "X-Bz-Content-Sha1": hashHex,
                         }
                     });
+
+                    console.log(response)
+                    // this is what adds the img to the DB
+                    createImg(response.url, postId, name)
     
                     if (response.ok) {
                         console.log('File uploaded successfully!');
