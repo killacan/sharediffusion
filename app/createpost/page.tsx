@@ -1,6 +1,6 @@
 'use client'
 
-import { createPost } from "../_components/serveractions"
+import { createPost, getSignedURL, createImg } from "../_components/serveractions"
 import * as z from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
@@ -17,14 +17,18 @@ import { Input } from "../_components/ui/input"
 import FormButton from "../_components/ui/formButton"
 import { Textarea } from "../_components/ui/textarea"
 import { createPostSchema } from '../_components/schemas'
-
-
+import Image from "next/image"
+import { useState } from "react"
+import { twMerge } from "tailwind-merge"
+import { create } from "domain"
 
 export default function PostAModel({
     searchParams,
   }: {
     searchParams: { message: string }
   }) {
+
+    const [file, setFile] = useState<File | undefined>(undefined)
 
     const form = useForm<z.infer<typeof createPostSchema>>({
         resolver: zodResolver(createPostSchema),
@@ -34,16 +38,73 @@ export default function PostAModel({
             description: '',
             version: '',
             version_desc: '',
+            file: undefined,
         }
     })
 
-    function onSubmit(values: z.infer<typeof createPostSchema>) {
-        // Do something with the form values.
-        // ✅ This will be type-safe and validated.
-        createPost(values)
-        // console.log(values)
-        form.reset()
-      }
+    const generateFileName = (bytes = 32) => {
+        const array = new Uint8Array(bytes);
+        crypto.getRandomValues(array);
+        return Array.from(array, (byte) => byte.toString(16).padStart(2, "0")).join("");
+    }
+
+    async function onSubmit(values: z.infer<typeof createPostSchema>) {
+        if (file) {
+            // Attach the file to the form values
+            // values.file = file;
+            let postId = await createPost(values)
+            const fileContent = await file.arrayBuffer();
+            
+            // Get the signed URL for uploading the file
+            const signedURLResult = await getSignedURL(file.type, file.size);
+    
+            if (signedURLResult.failure || !signedURLResult.success) {
+                console.log(signedURLResult.failure);
+            } else {
+                const signedURL = signedURLResult.success.url;
+                const hashBuffer = await crypto.subtle.digest('SHA-1', fileContent);
+                const hashArray = Array.from(new Uint8Array(hashBuffer));
+                const hashHex = hashArray
+                    .map((b) => b.toString(16).padStart(2, "0"))
+                    .join("");
+                // Upload the file using the signed URL
+                try {
+                    const name = generateFileName()
+                    
+                    const response = await fetch(signedURL, {
+                        method: 'POST',
+                        mode: 'cors',
+                        body: file, // File object
+                        headers: {
+                            'Content-Type': file.type, // Mime type of the file
+                            'authorization': signedURLResult.success.authorizationToken,
+                            "X-Bz-File-Name": name,
+                            "X-Bz-Content-Sha1": hashHex,
+                        }
+                    });
+
+                    console.log(response)
+                    // this is what adds the img to the DB
+                    createImg(response.url, postId, name)
+    
+                    if (response.ok) {
+                        console.log('File uploaded successfully!');
+                    } else {
+                        console.error('Failed to upload file:', response.statusText);
+                    }
+                } catch (error) {
+                    console.error('Error uploading file:', error);
+                }
+            }
+        }
+    
+        console.log(values);
+    }
+
+    function handleFileChange(event: React.ChangeEvent<HTMLInputElement>) {
+        setFile(event.target.files?.[0])
+
+    }
 
 
     return (
@@ -129,6 +190,31 @@ export default function PostAModel({
                     <FormControl>
                         <Textarea placeholder="describe your model here" {...field} />
                     </FormControl>
+                    {/* <FormDescription>
+                        This is your public display name.
+                    </FormDescription> */}
+                    <FormMessage />
+                    </FormItem>
+                )}
+                />
+                <FormField
+                control={form.control}
+                name="file"
+                render={({ field }) => (
+                    <FormItem>
+                    <FormLabel>Upload an Img</FormLabel>
+                    <FormControl>
+                        <Input id="file" type="file" onChange={handleFileChange}/>
+                    </FormControl>
+                    {file && (
+                        <Image
+                        src={URL.createObjectURL(file)}
+                        alt="file preview"
+                        width={200}
+                        height={200}
+                        className={twMerge(`rounded-md`)}
+                        />
+                    )}
                     {/* <FormDescription>
                         This is your public display name.
                     </FormDescription> */}

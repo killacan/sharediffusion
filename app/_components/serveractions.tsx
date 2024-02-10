@@ -5,7 +5,26 @@ import { headers, cookies } from 'next/headers'
 import { createPostSchema, updatePostSchema } from './schemas';
 import { signinFormSchema, signupFormSchema, updateVersionFormSchema } from './schemas' 
 import { z } from 'zod';
+// import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
+// import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
+import B2 from 'backblaze-b2';
 
+// const b2 = new S3Client({
+//   endpoint: 'https://s3.us-west-004.backblazeb2.com',
+//   region: 'us-west-004',
+//   credentials: {
+//     accessKeyId: process.env.BACKBLAZE_KEY_ID!,
+//     secretAccessKey: process.env.BACKBLAZE_APP_KEY!,
+//   },
+// })
+
+const b2 = new B2({
+  applicationKeyId: process.env.BACKBLAZE_TEST_APP_KEY_ID!, // or accountId: 'accountId'
+  applicationKey: process.env.BACKBLAZE_TEST_APP_KEY! // or masterApplicationKey
+});
+
+const bucket = 'sharediffusion-img-test'
+const bucketId = process.env.BACKBLAZE_TEST_BUCKET_ID!
 
 export async function signIn(values: z.infer<typeof signinFormSchema>) {
     'use server';
@@ -115,7 +134,7 @@ export async function createPost(values: z.infer<typeof createPostSchema>) {
   }
 
   // console.log(title, magnet, description)
-  return redirect('/createpost')
+  return postData[0].post_id
 
 }
 
@@ -236,4 +255,100 @@ export async function deletePost(title: string) {
   }
 
   return redirect(`/models?message=Model Post deleted successfully`)
+}
+
+type SignedURLResponse = {
+  failure?: undefined;
+  success: {
+      url: string;
+      authorizationToken: string;
+  };
+} | {
+  failure: string;
+  success?: undefined;
+};
+
+const acceptedTypes = [
+  'image/png',
+  'image/jpeg',
+  'image/jpg',
+  'image/webp',
+  'image/svg+xml',
+  'image/tiff',
+  'image/bmp',
+  'image/ico',
+  'image/x-icon',
+  'image/x-png',
+  'image/x-tiff',
+  'image/x-xbitmap',
+]
+
+const maxFileSize = 1024 * 1024 * 10 // 10MB
+
+export async function getSignedURL( fileType: string, size: number ): Promise<SignedURLResponse>{
+  'use server' 
+
+  // const cookieStore = cookies()
+  // const supabase = createClient(cookieStore)
+
+  // const { data: user, error } = await supabase.auth.getUser()
+
+  // if (error || !user) {
+  //   return { failure: 'must be logged in to create a post' }
+  // }
+
+  if (!acceptedTypes.includes(fileType)) {
+    return { failure: 'File type not accepted' }
+  }
+
+  if (size > maxFileSize) {
+    return { failure: 'File size too large' }
+  }
+
+  let uploadURL
+
+  try {
+    await b2.authorize({
+      // ...common arguments (optional)
+    }); 
+    uploadURL = await b2.getUploadUrl({
+      bucketId: bucketId,
+    })
+    console.log(bucketId, "this is the bucket id")
+  } catch (error) {
+    console.log(error, "this is the error")
+    return { failure: 'Could not authenticate user' }
+  }
+
+  // console.log(uploadURL.data.uploadUrl, "this is the upload url")
+  
+  return { success: { url: uploadURL.data.uploadUrl, authorizationToken: uploadURL.data.authorizationToken } }
+
+
+}
+
+export async function createImg(responseUrl : string, post_id: number | undefined, name: string) {
+  'use server'
+
+  const cookieStore = cookies()
+  const supabase = createClient(cookieStore)
+
+  const { data: user } = await supabase.auth.getUser()
+
+  if (!user.user || !post_id) {
+    return redirect('/createpost?message=must be logged in to create a post')
+  }
+
+  const { data: imgData, error} = await supabase.from('pictures').insert({
+    url: responseUrl,
+    post_id,
+    file_name: name,
+    user_id: user.user.id,
+  })
+
+  if (error || !imgData) {
+    console.log(error)
+    return redirect('/createpost?message=Could not create img')
+  }
+
 }

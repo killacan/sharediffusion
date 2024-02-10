@@ -6,6 +6,8 @@
     "start": "next start"
   },
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.504.0",
+    "@aws-sdk/s3-request-presigner": "^3.504.0",
     "@hookform/resolvers": "^3.3.4",
     "@radix-ui/react-dialog": "^1.0.5",
     "@radix-ui/react-label": "^2.0.2",
@@ -16,6 +18,7 @@
     "@supabase/supabase-js": "latest",
     "@vercel/speed-insights": "^1.0.2",
     "autoprefixer": "10.4.15",
+    "backblaze-b2": "^1.7.0",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.0",
     "geist": "^1.0.0",
@@ -34,6 +37,7 @@
     "zustand": "^4.4.7"
   },
   "devDependencies": {
+    "@types/backblaze-b2": "^1.5.6",
     "@types/node": "20.3.1",
     "@types/react": "18.2.8",
     "@types/react-dom": "18.2.5",
