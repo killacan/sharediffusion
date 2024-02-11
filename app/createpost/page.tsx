@@ -1,6 +1,6 @@
 'use client'
 
-import { createPost, getSignedURL, createImg } from "../_components/serveractions"
+import { createPost, getSignedURL, createImg, checkPostName } from "../_components/serveractions"
 import * as z from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
@@ -20,7 +20,6 @@ import { createPostSchema } from '../_components/schemas'
 import Image from "next/image"
 import { useState } from "react"
 import { twMerge } from "tailwind-merge"
-import { create } from "domain"
 
 export default function PostAModel({
     searchParams,
@@ -29,6 +28,7 @@ export default function PostAModel({
   }) {
 
     const [file, setFile] = useState<File | undefined>(undefined)
+    const [postNameError, setPostNameError] = useState<string | undefined>(undefined)
 
     const form = useForm<z.infer<typeof createPostSchema>>({
         resolver: zodResolver(createPostSchema),
@@ -49,10 +49,21 @@ export default function PostAModel({
     }
 
     async function onSubmit(values: z.infer<typeof createPostSchema>) {
+        
+        // check to make sure the post name is unique
+        const postNameCheck = await checkPostName(values.title)
+
+        // if success returns false, then the post name is already taken
+        if (!postNameCheck.success) {
+            setPostNameError("This post title is already taken")
+            return
+        } else {
+            setPostNameError(undefined)
+        }
+        
         if (file) {
-            // Attach the file to the form values
-            // values.file = file;
-            let postId = await createPost(values)
+
+            let postId = await createPost(values, true)
             const fileContent = await file.arrayBuffer();
             
             // Get the signed URL for uploading the file
@@ -96,6 +107,8 @@ export default function PostAModel({
                     console.error('Error uploading file:', error);
                 }
             }
+        } else {
+            createPost(values, false)
         }
     
         console.log(values);
@@ -129,7 +142,7 @@ export default function PostAModel({
                     {/* <FormDescription>
                         This is your public display name.
                     </FormDescription> */}
-                    <FormMessage />
+                    {postNameError && <FormMessage >{postNameError}</FormMessage>}
                     </FormItem>
                 )}
                 />

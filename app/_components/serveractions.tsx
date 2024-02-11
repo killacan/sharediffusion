@@ -86,7 +86,7 @@ export async function signUp(values: z.infer<typeof signupFormSchema>) {
   return redirect('/login?message=Check email to continue sign in process')
 }
 
-export async function createPost(values: z.infer<typeof createPostSchema>) {
+export async function createPost(values: z.infer<typeof createPostSchema>, hasFile: boolean) {
   'use server'
 
   const cookieStore = cookies()
@@ -134,7 +134,11 @@ export async function createPost(values: z.infer<typeof createPostSchema>) {
   }
 
   // console.log(title, magnet, description)
-  return postData[0].post_id
+  if (hasFile) {
+    return postData[0].post_id
+  } else {
+    return redirect('/models?message=Model Post created successfully')
+  }
 
 }
 
@@ -351,4 +355,20 @@ export async function createImg(responseUrl : string, post_id: number | undefine
     return redirect('/createpost?message=Could not create img')
   }
 
+}
+
+export async function checkPostName(name: string) {
+  'use server'
+
+  const cookieStore = cookies()
+  const supabase = createClient(cookieStore)
+
+  const { data: postData, error } = await supabase.from('posts').select('*').eq('title', name).single()
+
+  console.log(postData, error, "this is the post data")
+  if (error && error.details !== 'The result contains 0 rows' || postData) {
+    return { success: false }
+  }
+
+  return { success: true }
 }

@@ -2,9 +2,6 @@
 import { createClient } from '@/utils/supabase/server'
 import { cookies } from 'next/headers'
 import VersionSelect from '@/app/_components/versionSelect'
-import { Copy } from "lucide-react"
- 
-import { Button } from '@/app/_components/ui/button'
 import {
   Dialog,
   DialogClose,
@@ -15,21 +12,6 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/app/_components/ui/dialog"
-import { Input } from "@/app/_components/ui/input"
-import { Label } from "@/app/_components/ui/label"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/app/_components/ui/tabs"
-import * as z from 'zod'
-import { zodResolver } from '@hookform/resolvers/zod'
-import { useForm } from 'react-hook-form'
-import {
-  Form,
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/app/_components/ui/form"
 import UpdateModelForm from '@/app/_components/updateModelForm'
 import DeleteButton from '@/app/_components/deleteButton'
 
