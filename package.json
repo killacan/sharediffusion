@@ -17,6 +17,8 @@
     "@supabase/ssr": "latest",
     "@supabase/supabase-js": "latest",
     "@vercel/speed-insights": "^1.0.2",
+    "antd": "^5.14.0",
+    "antd-img-crop": "^4.21.0",
     "autoprefixer": "10.4.15",
     "backblaze-b2": "^1.7.0",
     "class-variance-authority": "^0.7.0",

@@ -17,15 +17,22 @@ import { Input } from "../_components/ui/input"
 import FormButton from "../_components/ui/formButton"
 import { Textarea } from "../_components/ui/textarea"
 import { createPostSchema } from '../_components/schemas'
-import Image from "next/image"
+// import Image from "next/image"
 import { useState } from "react"
 import { twMerge } from "tailwind-merge"
+import { Upload } from 'antd';
+import type { GetProp, UploadFile, UploadProps } from 'antd';
+import ImgCrop from 'antd-img-crop';
+
+type FileType = Parameters<GetProp<UploadProps, 'beforeUpload'>>[0];
 
 export default function PostAModel({
     searchParams,
   }: {
     searchParams: { message: string }
   }) {
+
+    const [fileList, setFileList] = useState<UploadFile[]>([]);
 
     const [file, setFile] = useState<File | undefined>(undefined)
     const [postNameError, setPostNameError] = useState<string | undefined>(undefined)
@@ -41,6 +48,25 @@ export default function PostAModel({
             file: undefined,
         }
     })
+
+    const onChange: UploadProps['onChange'] = ({ fileList: newFileList }) => {
+        setFileList(newFileList);
+    };
+
+    const onPreview = async (file: UploadFile) => {
+        let src = file.url as string;
+        if (!src) {
+          src = await new Promise((resolve) => {
+            const reader = new FileReader();
+            reader.readAsDataURL(file.originFileObj as FileType);
+            reader.onload = () => resolve(reader.result as string);
+          });
+        }
+        const image = new Image();
+        image.src = src;
+        const imgWindow = window.open(src);
+        imgWindow?.document.write(image.outerHTML);
+    };
 
     const generateFileName = (bytes = 32) => {
         const array = new Uint8Array(bytes);
@@ -210,31 +236,19 @@ export default function PostAModel({
                     </FormItem>
                 )}
                 />
-                <FormField
-                control={form.control}
-                name="file"
-                render={({ field }) => (
-                    <FormItem>
-                    <FormLabel>Upload an Img</FormLabel>
-                    <FormControl>
-                        <Input id="file" type="file" onChange={handleFileChange}/>
-                    </FormControl>
-                    {file && (
-                        <Image
-                        src={URL.createObjectURL(file)}
-                        alt="file preview"
-                        width={200}
-                        height={200}
-                        className={twMerge(`rounded-md`)}
-                        />
-                    )}
-                    {/* <FormDescription>
-                        This is your public display name.
-                    </FormDescription> */}
-                    <FormMessage />
-                    </FormItem>
-                )}
-                />
+                {/* <ImgCrop rotationSlider> */}
+                <FormLabel>Upload Photos!</FormLabel>
+
+                    <Upload
+                        // action="https://run.mocky.io/v3/435e224c-44fb-4773-9faf-380c5e6a2188"
+                        listType="picture-card"
+                        fileList={fileList}
+                        onChange={onChange}
+                        onPreview={onPreview}
+                    >
+                        {fileList.length < 5 && <p className="text-white">+ Upload</p>}
+                    </Upload>
+                {/* </ImgCrop> */}
                 <FormButton >Submit</FormButton>
             </form>
             </Form>
