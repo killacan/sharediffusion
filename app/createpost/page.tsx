@@ -145,6 +145,9 @@ export default function PostAModel({
 
     }
 
+    console.log(fileList)
+    console.log(file)
+
 
     return (
         <div className="flex-1 flex flex-col w-full sm:max-w-lg px-8 py-8 gap-2 place-content-center">
