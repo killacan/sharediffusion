@@ -30,8 +30,8 @@ export default async function Photos() {
             <div className='grid lg:grid-cols-3 sm:grid-cols-2 grid-cols-1 gap-6'>
               {data?.map((photo) => (
                   <Link href={`photos/${photo.file_name}`} className='border border-white rounded-md w-72 h-72'>
-                    <div className='w-72 h-72 overflow-hidden rounded-lg'>
-                      <Image className='rounded-lg' src={photo.url} alt={photo.file_name} width={285} height={288} />
+                    <div className='w-72 h-72 overflow-hidden rounded-lg relative'>
+                      <Image className='rounded-lg object-cover' src={photo.url} alt={photo.file_name} fill={true} />
                     </div>
                   </Link>
                 ))}
