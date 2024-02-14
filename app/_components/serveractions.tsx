@@ -160,7 +160,7 @@ export async function updateVersion(values: z.infer<typeof updateVersionFormSche
 
   if (user.user?.id !== user_id) {
     // TODO: add error message
-    console.log(user.user?.id, user_id, "this is the user id")
+    // console.log(user.user?.id, user_id, "this is the user id")
     return redirect('/models?message=You do not have permission to edit this post')
   }
 
@@ -331,7 +331,7 @@ export async function getSignedURL( fileType: string, size: number ): Promise<Si
 
 }
 
-export async function createImg(responseUrl : string, post_id: number | undefined, name: string) {
+export async function createImg(post_id: number | undefined, name: string) {
   'use server'
 
   const cookieStore = cookies()
@@ -343,8 +343,10 @@ export async function createImg(responseUrl : string, post_id: number | undefine
     return redirect('/createpost?message=must be logged in to create a post')
   }
 
+  const authorizeResponse = await b2.authorize({})
+  
   const { data: imgData, error} = await supabase.from('pictures').insert({
-    url: responseUrl,
+    url: `${authorizeResponse.data.downloadUrl}/file/${bucket}/${name}`,
     post_id,
     file_name: name,
     user_id: user.user.id,

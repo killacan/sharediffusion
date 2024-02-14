@@ -14,6 +14,7 @@ import {
 } from "@/app/_components/ui/dialog"
 import UpdateModelForm from '@/app/_components/updateModelForm'
 import DeleteButton from '@/app/_components/deleteButton'
+import { cache } from 'react'
 
 
 export const revalidate = 120
