@@ -13,6 +13,7 @@ import {
     FormLabel,
     FormMessage,
 } from "../_components/ui/form"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "../_components/ui/tabs"
 import { Input } from "../_components/ui/input"
 import FormButton from "../_components/ui/formButton"
 import { Textarea } from "../_components/ui/textarea"
@@ -175,179 +176,140 @@ export default function PostAModel({
         } else {
             createPost(values, false)
         }
-        
-        // if (file) {
-
-        //     let postId = await createPost(values, true)
-        //     const fileContent = await file.arrayBuffer();
-            
-        //     // Get the signed URL for uploading the file
-        //     const signedURLResult = await getSignedURL(file.type, file.size);
-    
-        //     if (signedURLResult.failure || !signedURLResult.success) {
-        //         console.log(signedURLResult.failure);
-        //     } else {
-        //         const signedURL = signedURLResult.success.url;
-        //         const hashBuffer = await crypto.subtle.digest('SHA-1', fileContent);
-        //         const hashArray = Array.from(new Uint8Array(hashBuffer));
-        //         const hashHex = hashArray
-        //             .map((b) => b.toString(16).padStart(2, "0"))
-        //             .join("");
-        //         // Upload the file using the signed URL
-        //         try {
-        //             const name = generateFileName()
-                    
-        //             const response = await fetch(signedURL, {
-        //                 method: 'POST',
-        //                 mode: 'cors',
-        //                 body: file, // File object
-        //                 headers: {
-        //                     'Content-Type': file.type, // Mime type of the file
-        //                     'authorization': signedURLResult.success.authorizationToken,
-        //                     "X-Bz-File-Name": name,
-        //                     "X-Bz-Content-Sha1": hashHex,
-        //                 }
-        //             });
-
-        //             console.log(response)
-        //             // this is what adds the img to the DB
-        //             createImg(response.url, postId, name)
-    
-        //             if (response.ok) {
-        //                 console.log('File uploaded successfully!');
-        //             } else {
-        //                 console.error('Failed to upload file:', response.statusText);
-        //             }
-        //         } catch (error) {
-        //             console.error('Error uploading file:', error);
-        //         }
-        //     }
-        // } else {
-        //     createPost(values, false)
-        // }
     
         console.log(values);
     }
 
-    function handleFileChange(event: React.ChangeEvent<HTMLInputElement>) {
-        setFile(event.target.files?.[0])
+    // function handleFileChange(event: React.ChangeEvent<HTMLInputElement>) {
+    //     setFile(event.target.files?.[0])
 
-    }
+    // }
 
-    console.log(fileList)
-    console.log(file)
+    // console.log(fileList)
+    // console.log(file)
 
 
     return (
         <div className="flex-1 flex flex-col w-full sm:max-w-lg px-8 py-8 gap-2 place-content-center">
-            <h1 className="text-3xl font-bold">Post A Model</h1>
+            <h1 className="text-3xl font-bold">Create a Post</h1>
             {searchParams?.message && (
                 <p className="mt-4 p-4 bg-foreground/10 text-foreground text-center">
                 {searchParams.message}
                 </p>
             )}
-            <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-                <FormField
-                control={form.control}
-                name="title"
-                render={({ field }) => (
-                    <FormItem>
-                    <FormLabel>title</FormLabel>
-                    <FormControl>
-                        <Input placeholder="awesome title here" {...field} />
-                    </FormControl>
-                    {/* <FormDescription>
-                        This is your public display name.
-                    </FormDescription> */}
-                    {postNameError && <FormMessage >{postNameError}</FormMessage>}
-                    </FormItem>
-                )}
-                />
-                <FormField
-                control={form.control}
-                name="version"
-                render={({ field }) => (
-                    <FormItem>
-                    <FormLabel>Initial Version</FormLabel>
-                    <FormControl>
-                        <Input placeholder="what version of your model is this?" {...field} />
-                    </FormControl>
-                    {/* <FormDescription>
-                        This is your public display name.
-                    </FormDescription> */}
-                    <FormMessage />
-                    </FormItem>
-                )}
-                />
-                <FormField
-                control={form.control}
-                name="version_desc"
-                render={({ field }) => (
-                    <FormItem>
-                    <FormLabel>Version Description</FormLabel>
-                    <FormControl>
-                        <Textarea placeholder="Describe this version, or what is unique about this version" {...field} />
-                    </FormControl>
-                    {/* <FormDescription>
-                        This is your public display name.
-                    </FormDescription> */}
-                    <FormMessage />
-                    </FormItem>
-                )}
-                />
-                <FormField
-                control={form.control}
-                name="magnet"
-                render={({ field }) => (
-                    <FormItem>
-                    <FormLabel>Magnet Link</FormLabel>
-                    <FormControl>
-                        <Input placeholder="put your magnet link here" {...field} />
-                    </FormControl>
-                    {/* <FormDescription>
-                        This is your public display name.
-                    </FormDescription> */}
-                    <FormMessage />
-                    </FormItem>
-                )}
-                />
-                <FormField
-                control={form.control}
-                name="description"
-                render={({ field }) => (
-                    <FormItem>
-                    <FormLabel>Description</FormLabel>
-                    <FormControl>
-                        <Textarea placeholder="describe your model here" {...field} />
-                    </FormControl>
-                    {/* <FormDescription>
-                        This is your public display name.
-                    </FormDescription> */}
-                    <FormMessage />
-                    </FormItem>
-                )}
-                />
-                {/* <ImgCrop rotationSlider> */}
-                <FormLabel>Upload Photos!</FormLabel>
+            <Tabs defaultValue="model" className="">
+                <TabsList>
+                    <TabsTrigger value="model">Model</TabsTrigger>
+                    <TabsTrigger value="photo">Photo</TabsTrigger>
+                </TabsList>
+                <TabsContent value="model" className='animate-in'>
+                    <Form {...form}>
+                    <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+                        <FormField
+                        control={form.control}
+                        name="title"
+                        render={({ field }) => (
+                            <FormItem>
+                            <FormLabel>title</FormLabel>
+                            <FormControl>
+                                <Input placeholder="awesome title here" {...field} />
+                            </FormControl>
+                            {/* <FormDescription>
+                                This is your public display name.
+                            </FormDescription> */}
+                            {postNameError && <FormMessage >{postNameError}</FormMessage>}
+                            </FormItem>
+                        )}
+                        />
+                        <FormField
+                        control={form.control}
+                        name="version"
+                        render={({ field }) => (
+                            <FormItem>
+                            <FormLabel>Initial Version</FormLabel>
+                            <FormControl>
+                                <Input placeholder="what version of your model is this?" {...field} />
+                            </FormControl>
+                            {/* <FormDescription>
+                                This is your public display name.
+                            </FormDescription> */}
+                            <FormMessage />
+                            </FormItem>
+                        )}
+                        />
+                        <FormField
+                        control={form.control}
+                        name="version_desc"
+                        render={({ field }) => (
+                            <FormItem>
+                            <FormLabel>Version Description</FormLabel>
+                            <FormControl>
+                                <Textarea placeholder="Describe this version, or what is unique about this version" {...field} />
+                            </FormControl>
+                            {/* <FormDescription>
+                                This is your public display name.
+                            </FormDescription> */}
+                            <FormMessage />
+                            </FormItem>
+                        )}
+                        />
+                        <FormField
+                        control={form.control}
+                        name="magnet"
+                        render={({ field }) => (
+                            <FormItem>
+                            <FormLabel>Magnet Link</FormLabel>
+                            <FormControl>
+                                <Input placeholder="put your magnet link here" {...field} />
+                            </FormControl>
+                            {/* <FormDescription>
+                                This is your public display name.
+                            </FormDescription> */}
+                            <FormMessage />
+                            </FormItem>
+                        )}
+                        />
+                        <FormField
+                        control={form.control}
+                        name="description"
+                        render={({ field }) => (
+                            <FormItem>
+                            <FormLabel>Description</FormLabel>
+                            <FormControl>
+                                <Textarea placeholder="describe your model here" {...field} />
+                            </FormControl>
+                            {/* <FormDescription>
+                                This is your public display name.
+                            </FormDescription> */}
+                            <FormMessage />
+                            </FormItem>
+                        )}
+                        />
+                        {/* <ImgCrop rotationSlider> */}
+                        <FormLabel>Upload Photos!</FormLabel>
 
-                    <Upload
-                        // action="https://run.mocky.io/v3/435e224c-44fb-4773-9faf-380c5e6a2188"
-                        listType="picture-card"
-                        fileList={fileList}
-                        onChange={onChange}
-                        onPreview={onPreview}
-                    >
-                        {fileList.length < 5 && <p className="text-white">+ Upload</p>}
-                    </Upload>
-                    <FormDescription>
-                        Files must be under 10MB
-                    </FormDescription>
-                    {fileError && <FormMessage >{fileError}</FormMessage>}
-                {/* </ImgCrop> */}
-                <FormButton >Submit</FormButton>
-            </form>
-            </Form>
+                            <Upload
+                                // action="https://run.mocky.io/v3/435e224c-44fb-4773-9faf-380c5e6a2188"
+                                listType="picture-card"
+                                fileList={fileList}
+                                onChange={onChange}
+                                onPreview={onPreview}
+                            >
+                                {fileList.length < 5 && <p className="text-white">+ Upload</p>}
+                            </Upload>
+                            <FormDescription>
+                                Files must be under 10MB
+                            </FormDescription>
+                            {fileError && <FormMessage >{fileError}</FormMessage>}
+                        {/* </ImgCrop> */}
+                        <FormButton >Submit</FormButton>
+                    </form>
+                    </Form>
+                </TabsContent>
+                <TabsContent value="model" className='animate-in'>
+                    
+                </TabsContent>
+            </Tabs>
         </div>
       )
 }

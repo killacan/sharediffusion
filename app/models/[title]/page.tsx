@@ -70,8 +70,6 @@ export default async function Post({ params: { title } }: { params: { title: str
             .select('*')
             .eq('post_id', data.post_id)
             .eq('user_id', userData.data.user_id)
-
-        console.log(images)
     }
 
     if (!data || !userData?.data || error || !versions) {
