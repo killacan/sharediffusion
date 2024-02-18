@@ -15,6 +15,10 @@ import {
 import UpdateModelForm from '@/app/_components/updateModelForm'
 import DeleteButton from '@/app/_components/deleteButton'
 import { cache } from 'react'
+import { UUID } from 'crypto'
+import React from 'react';
+import { Carousel } from 'antd';
+import Image from 'next/image'
 
 
 export const revalidate = 120
@@ -26,6 +30,13 @@ export interface Version {
     upload_date: string,
     name: string,
     user_id: string,
+}
+
+export interface userData {
+    user_id: UUID,
+    username: string,
+    description?: string,
+    profile_pic?: string,
 }
 
 export default async function Post({ params: { title } }: { params: { title: string } }) {
@@ -43,13 +54,22 @@ export default async function Post({ params: { title } }: { params: { title: str
     let userData
 
     if (data) {
-        userData = await supabase.from('users').select('username, description, profile_pic').eq('user_id', data.user_id).single()
+        userData = await supabase.from('users').select('username, description, profile_pic, user_id').eq('user_id', data.user_id).single() as { data: userData }
         // console.log(userData)
     }
 
     let versions
     if (userData) {
         versions = await supabase.from('versions').select('*').eq('post_id', data.post_id)
+    }
+
+    let images 
+    if (userData) {
+        images = await supabase
+            .from('pictures')
+            .select('*')
+            .eq('post_id', data.post_id)
+            .eq('user_id', userData.data.user_id)
     }
 
     if (!data || !userData?.data || error || !versions) {
@@ -73,7 +93,16 @@ export default async function Post({ params: { title } }: { params: { title: str
             <div className="animate-in flex-1 flex flex-col gap-3 opacity-0 max-w-4xl px-3">
                 <div className='flex gap-3 pt-12'>
                     <div className='border border-white w-96 h-96 text-center rounded-md'>
-                        <p> Img / Imgs will go here.</p>
+                        <Carousel autoplay>
+                            {images && images.data && images?.data.map((image, index) => {
+                                return (
+                                    <div className='overflow-hidden rounded-md' key={index}>
+                                        <Image src={image.url} alt={'uploaded ai image'} width={288} height={288} className='w-96 h-96 object-cover' />
+                                    </div>
+                                )
+                            })}
+                            {!images && <div className='rounded-lg bg-foreground/10 w-full h-72'>No Photo</div>}
+                        </Carousel>
                     </div>
                     {!isOwner && <div className='grid grid-rows-[70px_1fr_50px] w-72 border border-gray-500 rounded-md p-4'>
                         <h1 className="text-3xl font-bold">{data.title}</h1>

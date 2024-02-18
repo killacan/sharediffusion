@@ -10,8 +10,6 @@ import {
 import { PostgrestSingleResponse } from '@supabase/postgrest-js'
 import { Version } from "../models/[title]/page"
 import { useState, useEffect } from "react"
-import { create } from "zustand"
-import { set } from "zod"
 import { selectedVersionStore } from "./selectedversion"
 
 export default function VersionSelect({ versions }: { versions: PostgrestSingleResponse<any[]> }) {

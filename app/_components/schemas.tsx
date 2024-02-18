@@ -27,7 +27,7 @@ export const updatePostSchema = z.object({
     description: z.string(),
 })
 
-const maxFileSize = 1024 * 1024 * 5 // 5MB
+const maxFileSize = 1024 * 1024 * 10 // 5MB
 
 function checkFileType(file: File) {
     if (file?.name) {
@@ -57,6 +57,12 @@ export const signinFormSchema = z.object({
     password: z.string().min(8, {
         message: 'Password must be at least 8 characters long'
     }),
+  })
+
+  export const imgUploadSchema = z.object({
+    file: z.any().refine((file) => file.size < maxFileSize, "File must be less than 10MB" )
+    .refine((file) => checkFileType(file), "File must be a .png or .jpg"),
+  
   })
   
   export const signupFormSchema = z.object({
