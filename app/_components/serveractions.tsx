@@ -339,23 +339,33 @@ export async function createImg(post_id: number | undefined, name: string) {
 
   const { data: user } = await supabase.auth.getUser()
 
-  if (!user.user || !post_id) {
+  if (!user.user) {
     return redirect('/createpost?message=must be logged in to create a post')
   }
-
-  const authorizeResponse = await b2.authorize({})
   
-  const { data: imgData, error} = await supabase.from('pictures').insert({
-    url: `${authorizeResponse.data.downloadUrl}/file/${bucket}/${name}`,
-    post_id,
-    file_name: name,
-    user_id: user.user.id,
-  })
+  const authorizeResponse = await b2.authorize({})
 
-  if (error || !imgData) {
-    console.log(error)
-    return redirect('/createpost?message=Could not create img')
+  // we need to allow people to upload images without creating a post. 
+  if (!post_id) {
+    const { data: imgData, error } = await supabase.from('pictures').insert({
+      url: `${authorizeResponse.data.downloadUrl}/file/${bucket}/${name}`,
+      file_name: name,
+      user_id: user.user.id,
+    })
+  } else {
+    const { data: imgData, error} = await supabase.from('pictures').insert({
+      url: `${authorizeResponse.data.downloadUrl}/file/${bucket}/${name}`,
+      post_id,
+      file_name: name,
+      user_id: user.user.id,
+    })
+  
+    if (error || !imgData) {
+      console.log(error)
+      return redirect('/createpost?message=Could not create img')
+    }
   }
+  
 
 }
 

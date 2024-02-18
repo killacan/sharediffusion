@@ -17,7 +17,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "../_components/ui/tabs
 import { Input } from "../_components/ui/input"
 import FormButton from "../_components/ui/formButton"
 import { Textarea } from "../_components/ui/textarea"
-import { createPostSchema } from '../_components/schemas'
+import { createPostSchema, imgUploadSchema } from '../_components/schemas'
 // import Image from "next/image"
 import { useState } from "react"
 import { twMerge } from "tailwind-merge"
@@ -41,7 +41,7 @@ const acceptedTypes = [
     'image/x-png',
     'image/x-tiff',
     'image/x-xbitmap',
-  ]
+]
 
 export default function PostAModel({
     searchParams,
@@ -63,6 +63,13 @@ export default function PostAModel({
             description: '',
             version: '',
             version_desc: '',
+            file: undefined,
+        }
+    })
+
+    const photoForm = useForm<z.infer<typeof imgUploadSchema>>({
+        resolver: zodResolver(createPostSchema),
+        defaultValues: {
             file: undefined,
         }
     })
@@ -178,6 +185,61 @@ export default function PostAModel({
         }
     
         console.log(values);
+    }
+
+    async function handleImgSubmit() {
+        if (fileList.length > 0) {
+
+            fileList.forEach(async (file) => {
+                const fileContent = await file.originFileObj?.arrayBuffer();
+                // check to make sure we have the file and it's not empty
+                if (!file.originFileObj || !file.type || !file.size || !fileContent) {
+                    console.log("no file or error with file")
+                    return
+                }
+                // Get the signed URL for uploading the file
+                const signedURLResult = await getSignedURL(file.type, file.size);
+        
+                if (signedURLResult.failure || !signedURLResult.success) {
+                    console.log(signedURLResult.failure);
+                } else {
+                    const signedURL = signedURLResult.success.url;
+                    const hashBuffer = await crypto.subtle.digest('SHA-1', fileContent);
+                    const hashArray = Array.from(new Uint8Array(hashBuffer));
+                    const hashHex = hashArray
+                        .map((b) => b.toString(16).padStart(2, "0"))
+                        .join("");
+                    // Upload the file using the signed URL
+                    try {
+                        const name = generateFileName()
+                        
+                        const response = await fetch(signedURL, {
+                            method: 'POST',
+                            mode: 'cors',
+                            body: file.originFileObj, // File object
+                            headers: {
+                                'Content-Type': file.type, // Mime type of the file
+                                'authorization': signedURLResult.success.authorizationToken,
+                                "X-Bz-File-Name": name,
+                                "X-Bz-Content-Sha1": hashHex,
+                            }
+                        });
+    
+                        // this is what adds the img to the DB
+                        createImg(undefined, name)
+    
+                        if (response.ok) {
+                            console.log('File uploaded successfully!');
+                        } else {
+                            console.error('Failed to upload file:', response.statusText);
+                        }
+                    } catch (error) {
+                        console.error('Error uploading file:', error);
+                    }
+                }
+            })
+
+        }
     }
 
     // function handleFileChange(event: React.ChangeEvent<HTMLInputElement>) {
@@ -306,9 +368,26 @@ export default function PostAModel({
                     </form>
                     </Form>
                 </TabsContent>
-                <TabsContent value="model" className='animate-in'>
-                    
-                </TabsContent>
+                <Form {...photoForm}>
+                    <form onSubmit={form.handleSubmit(handleImgSubmit)} className="space-y-8">
+                        <TabsContent value="photo" className='animate-in'>
+                        <FormLabel>Upload Photos!</FormLabel>
+                            <Upload
+                                // action="https://run.mocky.io/v3/435e224c-44fb-4773-9faf-380c5e6a2188"
+                                listType="picture-card"
+                                fileList={fileList}
+                                onChange={onChange}
+                                onPreview={onPreview}
+                            >
+                                {fileList.length < 5 && <p className="text-white">+ Upload</p>}
+                            </Upload>
+                            <FormDescription>
+                                Files must be under 10MB
+                            </FormDescription>
+                            {fileError && <FormMessage >{fileError}</FormMessage>}
+                        </TabsContent>
+                    </form>
+                </Form>
             </Tabs>
         </div>
       )
