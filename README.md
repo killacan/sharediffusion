@@ -35,14 +35,14 @@ The project is currently in the planning stages, and the roadmap will be updated
 - [x] Create basic user authentication / login system
 - [x] Create posting system for models
 - [x] Img uploads to Backblaze B2
-- [ ] Create posting system for images
+- [x] Create posting system for images
 - [ ] Pictures page for uploaded pictures
-- [ ] Create basic user profile page/dashboard
-- [ ] Create an edit for user profile page
 - [ ] Review TOS and Privacy Policy
 - [ ] OPEN ALPHA
+- [ ] Create a search bar for models
+- [ ] Create basic user profile page/dashboard
+- [ ] Create an edit for user profile page
 - [ ] Add Tags to models
 - [ ] Add Tags to images
 - [ ] Improve user authentication( send less requests to Supabase)
 - [ ] Create Donation Page
-- [ ] Create a search bar for models
