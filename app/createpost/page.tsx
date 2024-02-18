@@ -76,7 +76,7 @@ export default function PostAModel({
 
     const onChange: UploadProps['onChange'] = ({ fileList: newFileList }) => {
         // if any of the files are larger than 10MB, remove them from the list
-        console.log(acceptedTypes)
+        // console.log(acceptedTypes)
         newFileList = newFileList.filter((file) => {
             if (file.size !== undefined && file.size > 10000000) {
                 setFileError("No seriously, files must be under 10MB.")
@@ -91,6 +91,7 @@ export default function PostAModel({
             }
 
         })
+        console.log(newFileList, "newFileList")
         setFileList(newFileList);
     };
 
@@ -188,6 +189,7 @@ export default function PostAModel({
     }
 
     async function handleImgSubmit() {
+        console.log("submitting")
         if (fileList.length > 0) {
 
             fileList.forEach(async (file) => {
@@ -332,20 +334,20 @@ export default function PostAModel({
                         )}
                         />
                         <FormField
-                        control={form.control}
-                        name="description"
-                        render={({ field }) => (
-                            <FormItem>
-                            <FormLabel>Description</FormLabel>
-                            <FormControl>
-                                <Textarea placeholder="describe your model here" {...field} />
-                            </FormControl>
-                            {/* <FormDescription>
-                                This is your public display name.
-                            </FormDescription> */}
-                            <FormMessage />
-                            </FormItem>
-                        )}
+                            control={form.control}
+                            name="description"
+                            render={({ field }) => (
+                                <FormItem>
+                                <FormLabel>Description</FormLabel>
+                                <FormControl>
+                                    <Textarea placeholder="describe your model here" {...field} />
+                                </FormControl>
+                                {/* <FormDescription>
+                                    This is your public display name.
+                                </FormDescription> */}
+                                <FormMessage />
+                                </FormItem>
+                            )}
                         />
                         {/* <ImgCrop rotationSlider> */}
                         <FormLabel>Upload Photos!</FormLabel>
@@ -363,31 +365,47 @@ export default function PostAModel({
                                 Files must be under 10MB
                             </FormDescription>
                             {fileError && <FormMessage >{fileError}</FormMessage>}
+                            <FormButton >Submit</FormButton>
                         {/* </ImgCrop> */}
-                        <FormButton >Submit</FormButton>
                     </form>
                     </Form>
                 </TabsContent>
+                <TabsContent value="photo" className='animate-in'>
                 <Form {...photoForm}>
-                    <form onSubmit={form.handleSubmit(handleImgSubmit)} className="space-y-8">
-                        <TabsContent value="photo" className='animate-in'>
+                    <form onSubmit={photoForm.handleSubmit(handleImgSubmit)} className="space-y-8">
                         <FormLabel>Upload Photos!</FormLabel>
-                            <Upload
-                                // action="https://run.mocky.io/v3/435e224c-44fb-4773-9faf-380c5e6a2188"
-                                listType="picture-card"
-                                fileList={fileList}
-                                onChange={onChange}
-                                onPreview={onPreview}
-                            >
-                                {fileList.length < 5 && <p className="text-white">+ Upload</p>}
-                            </Upload>
+                            <FormField
+                            control={photoForm.control}
+                            name="file"
+                            render={({ field }) => (
+                                <FormItem>
+                                <FormControl>
+                                    <Upload
+                                    // action="https://run.mocky.io/v3/435e224c-44fb-4773-9faf-380c5e6a2188"
+                                    listType="picture-card"
+                                    fileList={fileList}
+                                    onChange={onChange}
+                                    onPreview={onPreview}
+                                >
+                                    {fileList.length < 5 && <p className="text-white">+ Upload</p>}
+                                </Upload>
+                                </FormControl>
+                                {/* <FormDescription>
+                                    This is your public display name.
+                                </FormDescription> */}
+                                <FormMessage />
+                                </FormItem>
+                            )}
+                            />
                             <FormDescription>
                                 Files must be under 10MB
                             </FormDescription>
                             {fileError && <FormMessage >{fileError}</FormMessage>}
-                        </TabsContent>
-                    </form>
-                </Form>
+                            <button onClick={handleImgSubmit} >Submit</button>
+
+                        </form>
+                    </Form>
+                </TabsContent>
             </Tabs>
         </div>
       )
