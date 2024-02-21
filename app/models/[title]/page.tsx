@@ -108,14 +108,14 @@ export default async function Post({ params: { title } }: { params: { title: str
                         <h1 className="text-3xl font-bold">{data.title}</h1>
                         <VersionSelect versions={versions} />
                         <h2 className='text-xl font-bold mt-auto text-center'>
-                            uploader: {userData.data.username}
+                            By: {userData.data.username}
                         </h2>
                     </div>}
                     {isOwner && <div className='grid grid-rows-[70px_1fr_50px] w-72 border border-gray-500 rounded-md p-4'>
                         <h1 className="text-3xl font-bold">{data.title}</h1>
                         <VersionSelect versions={versions} />
                         <h2 className='text-xl font-bold mt-auto text-center'>
-                            uploader: {userData.data.username}
+                            By: {userData.data.username}
                         </h2>
                         <div className='flex justify-center w-full gap-2'>
                         <Dialog>
@@ -149,7 +149,6 @@ export default async function Post({ params: { title } }: { params: { title: str
 
                 </div>
                 <div>
-                    <h2>Description: </h2>
                     <p>{data.description}</p>
                 </div>
             </div>

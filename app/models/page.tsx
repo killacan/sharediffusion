@@ -16,9 +16,19 @@ export default async function Models() {
   const { data, error } = await supabase
   .from('posts')
   .select('title, pictures(url)')
+  .order('updated_at', { ascending: false })
 
   if (error) {
-    return redirect('/models?message=Could not get models')
+    console.error(error)
+
+    return (
+      <div className="flex-1 w-full flex flex-col gap-20 items-center">
+        <div className="animate-in flex-1 flex flex-col gap-3 opacity-0 max-w-4xl px-3">
+          <h1 className="text-4xl font-bold text-center">404</h1>
+          <p className="text-center">This page could not be found.</p>
+        </div>
+      </div>
+    )
   }
 
   if (data) {
@@ -31,7 +41,7 @@ export default async function Models() {
       <div className="animate-in gap-20 opacity-0 w-full px-10">
         <main className="flex-1 flex flex-col gap-6 max-w-7xl mx-auto">
           <h1 className="text-3xl font-bold text-center">Models</h1>
-          <div className=' grid xl:grid-cols-4 lg:grid-cols-3 sm:grid-cols-2 grid-cols-1 gap-6 justify-items-center '>
+          <div className='grid xl:grid-cols-4 lg:grid-cols-3 sm:grid-cols-2 grid-cols-1 gap-6 justify-items-center '>
             {data?.map((model, index) => (
               <Link 
                 key={index} 

@@ -46,3 +46,4 @@ The project is currently in the planning stages, and the roadmap will be updated
 - [ ] Add Tags to images
 - [ ] Improve user authentication( send less requests to Supabase)
 - [ ] Create Donation Page
+- [ ] Make Descriptions nicer / in markdown

@@ -32,15 +32,15 @@ export default function VersionSelect({ versions }: { versions: PostgrestSingleR
     ))
 
     const transformState = (e: number) => {
-        console.log(e, "e")
+        // console.log(e, "e")
         const versionData = versions.data[e]
         version.setSelectedVersion(versionData)
-        console.log(versionData, "version data", version)
+        // console.log(versionData, "version data", version)
         setSelectedVersion(e)
     }
 
     useEffect(() => {
-      version.setSelectedVersion(versions.data[0])
+      version.setSelectedVersion(versions.data[versions.data.length - 1])
     
       return () => {
         
@@ -61,6 +61,12 @@ export default function VersionSelect({ versions }: { versions: PostgrestSingleR
                     </SelectContent>
                 </Select>}
             </div>
+            <a 
+                href={`${versions.data[selectedVersion].version_magnet}`}
+                className=" bg-blue-600 border border-white rounded-md p-2 hover:bg-blue-500 duration-300 w-24 text-center cursor-pointer"
+            >
+                <p>Magnet</p>
+            </a>
             <p>{versions.data[selectedVersion].version_desc}</p>
         </div>
     )
