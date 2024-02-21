@@ -15,7 +15,7 @@ export default function PrivacyPolicy() {
                 
                 <h2 className={subheading}>Log Files</h2>
                 
-                <p>share diffusion follows a standard procedure of using log files. These files log visitors when they visit websites. All hosting companies do this and a part of hosting services' analytics. The information collected by log files include internet protocol (IP) addresses, browser type, Internet Service Provider (ISP), date and time stamp, referring/exit pages, and possibly the number of clicks. These are not linked to any information that is personally identifiable. The purpose of the information is for analyzing trends, administering the site, tracking users' movement on the website, and gathering demographic information. Our Privacy Policy was created with the help of the <a href="https://www.privacypolicygenerator.org">Privacy Policy Generator</a>.</p>
+                <p> Share Diffusion does not collect logs of user data for visiting site. We do collet some analytics, but it only provides performance data and is anonymous. Our Privacy Policy was created with the help of the <a href="https://www.privacypolicygenerator.org">Privacy Policy Generator</a>.</p>
                 
                 <h2 className={subheading}>Cookies and Web Beacons</h2>
                 
@@ -31,7 +31,7 @@ export default function PrivacyPolicy() {
                 
                 <p>Another part of our priority is adding protection for children while using the internet. We encourage parents and guardians to observe, participate in, and/or monitor and guide their online activity.</p>
                 
-                <p>share diffusion does not knowingly collect any Personal Identifiable Information from children under the age of 13. If you think that your child provided this kind of information on our website, we strongly encourage you to contact us immediately and we will do our best efforts to promptly remove such information from our records.</p>
+                <p>Share Diffusion does not knowingly collect any Personal Identifiable Information from children under the age of 13. If you think that your child provided this kind of information on our website, we strongly encourage you to contact us immediately and we will do our best efforts to promptly remove such information from our records.</p>
                 
                 <h2 className={subheading}>Online Privacy Policy Only</h2>
                 
@@ -41,7 +41,6 @@ export default function PrivacyPolicy() {
                 
                 <p>By using our website, you hereby consent to our Privacy Policy and agree to its Terms and Conditions.</p>
 
-                <p>Note: Privacy Policy will be updated in the future, website is in pre-alpha stage.</p>		
             </div>
         </div>							
     )
