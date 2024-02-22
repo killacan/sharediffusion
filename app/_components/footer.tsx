@@ -14,6 +14,7 @@ export default function Footer() {
         <a className="pr-3" href="https://discord.gg/y7aMda893Y" target="_blank" rel="noopener noreferrer"><FaDiscord /></a>
         <Link className={toslink} href={"/privacypolicy"}>Privacy Policy</Link>
         <Link className={toslink} href={"/tos"}>Terms and Conditions</Link>
+        <p className="text-sm">copyright Share Diffusion llc</p>
       </div>
     </footer>
   )

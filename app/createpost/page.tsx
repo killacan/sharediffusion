@@ -17,14 +17,12 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "../_components/ui/tabs
 import { Input } from "../_components/ui/input"
 import FormButton from "../_components/ui/formButton"
 import { Textarea } from "../_components/ui/textarea"
+import { Checkbox } from "../_components/ui/checkbox"
 import { createPostSchema, imgUploadSchema } from '../_components/schemas'
 // import Image from "next/image"
 import { useState } from "react"
-import { twMerge } from "tailwind-merge"
 import { Upload } from 'antd';
 import type { GetProp, UploadFile, UploadProps } from 'antd';
-import ImgCrop from 'antd-img-crop';
-import { redirect } from "next/navigation"
 
 type FileType = Parameters<GetProp<UploadProps, 'beforeUpload'>>[0];
 
@@ -358,6 +356,8 @@ export default function PostAModel({
                                 fileList={fileList}
                                 onChange={onChange}
                                 onPreview={onPreview}
+                                accept="image/*"
+                                className="flex flex-col-reverse"
                             >
                                 {fileList.length < 5 && <p className="text-white">+ Upload</p>}
                             </Upload>
@@ -386,6 +386,7 @@ export default function PostAModel({
                                     fileList={fileList}
                                     onChange={onChange}
                                     onPreview={onPreview}
+                                    accept="image/*"
                                 >
                                     {fileList.length < 5 && <p className="text-white">+ Upload</p>}
                                 </Upload>
