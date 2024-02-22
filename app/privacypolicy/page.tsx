@@ -15,7 +15,7 @@ export default function PrivacyPolicy() {
                 
                 <h2 className={subheading}>Log Files</h2>
                 
-                <p> Share Diffusion does not collect logs of user data for visiting site. We do collet some analytics, but it only provides performance data and is anonymous. Our Privacy Policy was created with the help of the <a href="https://www.privacypolicygenerator.org">Privacy Policy Generator</a>.</p>
+                <p> Share Diffusion does not collect logs of user data for visiting site. We do collet some analytics, but it only provides performance data and is anonymous. All analytics runs on the server, and does not run in browser. Our Privacy Policy was created with the help of the <a href="https://www.privacypolicygenerator.org">Privacy Policy Generator</a>.</p>
                 
                 <h2 className={subheading}>Cookies and Web Beacons</h2>
                 
