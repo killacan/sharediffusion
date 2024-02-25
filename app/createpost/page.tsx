@@ -25,6 +25,7 @@ import type { GetProp, UploadFile, UploadProps } from 'antd';
 import React, {useEffect, useState} from 'react';
 import Dropzone from "react-dropzone";
 import { cn } from "@/app/_components/utils";
+import FileItem from "@/app/_components/fileItem";
 
 type FileType = Parameters<GetProp<UploadProps, 'beforeUpload'>>[0];
 
@@ -43,24 +44,25 @@ const acceptedTypes = [
     'image/x-xbitmap',
 ]
 
-const thumbsContainer = {
-    display: 'flex',
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    marginTop: 16
-  };
-  
-  const thumb = {
-    display: 'inline-flex',
-    borderRadius: 2,
-    border: '1px solid #eaeaea',
-    marginBottom: 8,
-    marginRight: 8,
-    width: 100,
-    height: 100,
-    padding: 4,
-    boxSizing: 'border-box'
-  };
+const thumbsContainer = `
+flex
+flex-row
+flex-wrap
+mt-4
+`;
+
+  const thumbTailwind = `
+    inline-flex
+    rounded-md
+    border
+    border-gray-300
+    mb-2
+    mr-2
+    w-24
+    h-24
+    p-1
+    box-border
+`;
   
   const thumbInner = {
     display: 'flex',
@@ -105,6 +107,58 @@ export default function PostAModel({
             file: undefined,
         }
     })
+
+    // const thumbs = fileList.map(file => (
+    //     <div className="flex flex-col" key={file.name}>
+    //         <div className={thumbTailwind} >
+    //         <div style={thumbInner}>
+    //             <img
+    //             src={file.preview}
+    //             style={img}
+    //             // Revoke data uri after image is loaded
+    //             onLoad={() => { 
+    //                 if (file.preview) URL.revokeObjectURL(file.preview) 
+    //             }}
+    //             />
+    //         </div>
+    //         </div>
+    //         <div className="flex items-center">
+    //             <label htmlFor={`toggle-nsfw-${file.uid}`} className="mr-2">NSFW:</label>
+    //             <input
+    //                 id={`toggle-nsfw-${file.uid}`}
+    //                 type="checkbox"
+    //                 checked={isNSFW}
+    //                 onChange={handleToggleNSFW}
+    //                 className="form-checkbox h-5 w-5 text-gray-600"
+    //             />
+    //         </div>
+    //         <button
+    //             onClick={() => onDelete(file.uid)}
+    //             className="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded"
+    //         >
+    //             Delete
+    //         </button>
+    //     </div>
+    //   ));
+
+    const handleDelete = (uid: string) => {
+        setFileList((prevFileList) => prevFileList.filter((file) => file.uid !== uid));
+    }
+
+    const handleToggleNSFW = (uid: string) => {
+        console.log(uid, "uid")
+        setFileList((prevFileList) => prevFileList.map((file) => {
+            if (file.uid === uid) {
+                return {
+                    ...file,
+                    nsfw: !file.nsfw
+                }
+            } else {
+                return file
+            }
+        }));
+        console.log(fileList, "fileList")
+    }
 
     const onChange: UploadProps['onChange'] = ({ fileList: newFileList }) => {
         // if any of the files are larger than 10MB, remove them from the list
@@ -285,6 +339,15 @@ export default function PostAModel({
     // console.log(file)
 
 
+    useEffect(() => {
+        // Make sure to revoke the data uris to avoid memory leaks, will run on unmount
+        return () => fileList.forEach(file => {
+            if (file.preview) {
+                URL.revokeObjectURL(file.preview);
+            }
+        });
+    }, []);
+
     return (
         <div className="flex-1 flex flex-col w-full sm:max-w-lg px-8 py-8 gap-2 place-content-center">
             <h1 className="text-3xl font-bold">Create a Post</h1>
@@ -389,6 +452,37 @@ export default function PostAModel({
                             accept={{
                                 "image/*": [".jpg", ".jpeg", ".png"],
                             }}
+                            onDropAccepted={(files) => {
+                                const filteredFiles = files.filter((file) => {
+                                    if (file.size !== undefined && file.size > 10000000) {
+                                        setFileError("No seriously, files must be under 10MB.")
+                                        return false;
+                                    } else if (file.type !== undefined && !acceptedTypes.includes(file.type)) {
+                                        setFileError("Only images are allowed")
+                                        return false;
+                                    } else {
+                                        setFileError(undefined)
+                                        return true;
+                                    }
+                                });
+                                console.log(filteredFiles, "filteredFiles");
+                                // Map files to UploadFile<any> objects with uid
+                                const mappedFiles: UploadFile<any>[] = filteredFiles.map((file, index) => {
+                                    return {
+                                        ...file,
+                                        name: file.name,  // Spread the 'name' property
+                                        size: file.size,  // Spread the 'size' property
+                                        type: file.type,  // Spread the 'type' property
+                                        lastModified: file.lastModified, // Spread the 'lastModified' property
+                                        uid: `${index}-${Date.now()}`, // Add the uid property
+                                        preview: URL.createObjectURL(file), // Add the preview property
+                                        nsfw: false, // Add the nsfw property
+                                    }
+                                });
+                            
+                                console.log(mappedFiles, "newFileList");
+                                setFileList((prevFileList) => [...prevFileList, ...mappedFiles]);
+                            }}
                             multiple={true}
                             maxSize={5000000}
                             >
@@ -404,7 +498,7 @@ export default function PostAModel({
                                     <label
                                     htmlFor="Products"
                                     className={`text-sm text-[7E8DA0] cursor-pointer focus:outline-none focus:underline ${
-                                        form.formState.errors && "text-red-500"
+                                        fileError && "text-red-500"
                                     }`}
                                     >
                                     Add your Images
@@ -416,6 +510,13 @@ export default function PostAModel({
                             </Dropzone>
                         )}
                         />
+                        <aside className={thumbsContainer}>
+                        {fileList.map((file) => (
+                            <FileItem key={file.uid} file={file} onDelete={handleDelete} handleToggleNSFW={handleToggleNSFW} />
+                        ))}
+                        </aside>
+                        <FormButton >Submit</FormButton>
+
                     </form>
                     </Form>
                 </TabsContent>
