@@ -331,7 +331,7 @@ export async function getSignedURL( fileType: string, size: number ): Promise<Si
 
 }
 
-export async function createImg(post_id: number | undefined, name: string) {
+export async function createImg(post_id: number | undefined, name: string, nsfw: boolean) {
   'use server'
 
   const cookieStore = cookies()
@@ -351,6 +351,7 @@ export async function createImg(post_id: number | undefined, name: string) {
       url: `${authorizeResponse.data.downloadUrl}/file/${bucket}/${name}`,
       file_name: name,
       user_id: user.user.id,
+      nsfw,
     })
   } else {
     const { data: imgData, error} = await supabase.from('pictures').insert({
@@ -358,6 +359,7 @@ export async function createImg(post_id: number | undefined, name: string) {
       post_id,
       file_name: name,
       user_id: user.user.id,
+      nsfw,
     })
   
     if (error || !imgData) {

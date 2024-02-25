@@ -314,7 +314,7 @@ export default function PostAModel({
                         });
     
                         // this is what adds the img to the DB
-                        createImg(undefined, name)
+                        createImg(undefined, name, nsfw)
     
                         if (response.ok) {
                             console.log('File uploaded successfully!');
@@ -465,7 +465,6 @@ export default function PostAModel({
                                         return true;
                                     }
                                 });
-                                console.log(filteredFiles, "filteredFiles");
                                 // Map files to UploadFile<any> objects with uid
                                 const mappedFiles: UploadFile<any>[] = filteredFiles.map((file, index) => {
                                     return {
@@ -480,7 +479,6 @@ export default function PostAModel({
                                     }
                                 });
                             
-                                console.log(mappedFiles, "newFileList");
                                 setFileList((prevFileList) => [...prevFileList, ...mappedFiles]);
                             }}
                             multiple={true}
