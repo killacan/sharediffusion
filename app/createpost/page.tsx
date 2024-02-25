@@ -254,7 +254,7 @@ export default function PostAModel({
                         });
     
                         // this is what adds the img to the DB
-                        createImg(postId, name)
+                        createImg(postId, name, file.nsfw)
     
                         if (response.ok) {
                             console.log('File uploaded successfully!');
@@ -314,7 +314,7 @@ export default function PostAModel({
                         });
     
                         // this is what adds the img to the DB
-                        createImg(undefined, name, nsfw)
+                        createImg(undefined, name, file.nsfw)
     
                         if (response.ok) {
                             console.log('File uploaded successfully!');
