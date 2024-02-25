@@ -20,9 +20,11 @@ import { Textarea } from "../_components/ui/textarea"
 import { Checkbox } from "../_components/ui/checkbox"
 import { createPostSchema, imgUploadSchema } from '../_components/schemas'
 // import Image from "next/image"
-import { useState } from "react"
 import { Upload } from 'antd';
 import type { GetProp, UploadFile, UploadProps } from 'antd';
+import React, {useEffect, useState} from 'react';
+import Dropzone from "react-dropzone";
+import { cn } from "@/app/_components/utils";
 
 type FileType = Parameters<GetProp<UploadProps, 'beforeUpload'>>[0];
 
@@ -40,6 +42,38 @@ const acceptedTypes = [
     'image/x-tiff',
     'image/x-xbitmap',
 ]
+
+const thumbsContainer = {
+    display: 'flex',
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    marginTop: 16
+  };
+  
+  const thumb = {
+    display: 'inline-flex',
+    borderRadius: 2,
+    border: '1px solid #eaeaea',
+    marginBottom: 8,
+    marginRight: 8,
+    width: 100,
+    height: 100,
+    padding: 4,
+    boxSizing: 'border-box'
+  };
+  
+  const thumbInner = {
+    display: 'flex',
+    minWidth: 0,
+    overflow: 'hidden'
+  };
+  
+  const img = {
+    display: 'block',
+    width: 'auto',
+    height: '100%'
+  };
+  
 
 export default function PostAModel({
     searchParams,
@@ -347,26 +381,41 @@ export default function PostAModel({
                                 </FormItem>
                             )}
                         />
-                        {/* <ImgCrop rotationSlider> */}
-                        <FormLabel>Upload Photos!</FormLabel>
-
-                            <Upload
-                                // action="https://run.mocky.io/v3/435e224c-44fb-4773-9faf-380c5e6a2188"
-                                listType="picture-card"
-                                fileList={fileList}
-                                onChange={onChange}
-                                onPreview={onPreview}
-                                accept="image/*"
-                                className="flex flex-col-reverse"
+                        <FormField
+                        control={form.control}
+                        name="file"
+                        render={() => (
+                            <Dropzone
+                            accept={{
+                                "image/*": [".jpg", ".jpeg", ".png"],
+                            }}
+                            multiple={true}
+                            maxSize={5000000}
                             >
-                                {fileList.length < 5 && <p className="text-white">+ Upload</p>}
-                            </Upload>
-                            <FormDescription>
-                                Files must be under 10MB
-                            </FormDescription>
-                            {fileError && <FormMessage >{fileError}</FormMessage>}
-                            <FormButton >Submit</FormButton>
-                        {/* </ImgCrop> */}
+                            {({ getRootProps, getInputProps }) => (
+                                <div
+                                {...getRootProps({
+                                    className: cn(
+                                    "p-3 mb-4 flex flex-col items-center justify-center w-full rounded-md cursor-pointer border border-[#e2e8f0]"
+                                    ),
+                                })}
+                                >
+                                <div className="flex items-center gap-x-3 mt-2 mb-2">
+                                    <label
+                                    htmlFor="Products"
+                                    className={`text-sm text-[7E8DA0] cursor-pointer focus:outline-none focus:underline ${
+                                        form.formState.errors && "text-red-500"
+                                    }`}
+                                    >
+                                    Add your Images
+                                    <input {...getInputProps()} />
+                                    </label>
+                                </div>
+                                </div>
+                            )}
+                            </Dropzone>
+                        )}
+                        />
                     </form>
                     </Form>
                 </TabsContent>
