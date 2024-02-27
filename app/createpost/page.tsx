@@ -17,9 +17,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "../_components/ui/tabs
 import { Input } from "../_components/ui/input"
 import FormButton from "../_components/ui/formButton"
 import { Textarea } from "../_components/ui/textarea"
-import { Checkbox } from "../_components/ui/checkbox"
 import { createPostSchema, imgUploadSchema } from '../_components/schemas'
-// import Image from "next/image"
 import React, {useEffect, useState} from 'react';
 import Dropzone from "react-dropzone";
 import { cn } from "@/app/_components/utils";
@@ -185,7 +183,7 @@ export default function PostAModel({
             createPost(values, false)
         }
     
-        console.log(values);
+        // console.log(values);
     }
 
     async function handleImgSubmit() {
