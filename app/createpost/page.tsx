@@ -20,15 +20,11 @@ import { Textarea } from "../_components/ui/textarea"
 import { Checkbox } from "../_components/ui/checkbox"
 import { createPostSchema, imgUploadSchema } from '../_components/schemas'
 // import Image from "next/image"
-import { Upload } from 'antd';
-import type { GetProp, UploadFile, UploadProps } from 'antd';
 import React, {useEffect, useState} from 'react';
 import Dropzone from "react-dropzone";
 import { cn } from "@/app/_components/utils";
 import FileItem from "@/app/_components/fileItem";
-import { RcFile } from "antd/lib/upload";
 
-type FileType = Parameters<GetProp<UploadProps, 'beforeUpload'>>[0];
 
 const acceptedTypes = [
     'image/png',
