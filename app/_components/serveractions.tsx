@@ -5,8 +5,6 @@ import { headers, cookies } from 'next/headers'
 import { createPostSchema, updatePostSchema } from './schemas';
 import { signinFormSchema, signupFormSchema, updateVersionFormSchema } from './schemas' 
 import { z } from 'zod';
-// import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
-// import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import B2 from 'backblaze-b2';
 
 // const b2 = new S3Client({
@@ -190,7 +188,20 @@ export async function deletePost(title: string) {
   return redirect(`/models?message=Model Post deleted successfully`)
 }
 
-export async function getPosts() {
+export async function getPosts(page: number) {
+  'use server'
+
+  const cookieStore = cookies()
+  const supabase = createClient(cookieStore)
+
+  const { data: postData, error } = await supabase.from('posts').select('*, pictures(*)').order('updated_at', { ascending: false }).range(page * 10, (page * 10) + 10)
+
+  if (error) {
+    console.error(error)
+    return { posts: [] }
+  }
+
+  return { posts: postData }
   
 }
 

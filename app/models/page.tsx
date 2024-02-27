@@ -1,25 +1,29 @@
 // this is to display all the models that have been uploaded. 
-import { createClient } from '@/utils/supabase/server'
+
 import { headers, cookies } from 'next/headers'
 import Link from 'next/link'
 import { redirect } from 'next/navigation'
 import Image from 'next/image'
+import { modelsState } from '../_components/modelsStore'
+import { getPosts } from '../_components/serveractions'
+import { useEffect } from 'react'
+import ListItems from '../_components/listItems'
+import { get } from 'http'
 
 export const revalidate = 120
 
 export default async function Models() {
 
-  const cookieStore = cookies()
-  const supabase = createClient(cookieStore)
+  const initialModels = await getPosts(0)
 
+  const fetchItems = async (offset: number) => {
+    'use server'
+    const models = await getPosts(offset)
+    return models
+  }
 
-  const { data, error } = await supabase
-  .from('posts')
-  .select('title, pictures(url)')
-  .order('updated_at', { ascending: false })
-
-  if (error) {
-    console.error(error)
+  
+  if (initialModels.posts.length === 0) {
 
     return (
       <div className="flex-1 w-full flex flex-col gap-20 items-center">
@@ -31,10 +35,6 @@ export default async function Models() {
     )
   }
 
-  if (data) {
-    // console.log(data[9])
-  }
-
   return (
     <div className="flex-1 w-full flex flex-col gap-20 items-center py-6">
 
@@ -42,21 +42,8 @@ export default async function Models() {
         <main className="flex-1 flex flex-col gap-6 max-w-7xl mx-auto">
           <h1 className="text-3xl font-bold text-center">Models</h1>
           <div className='grid xl:grid-cols-4 lg:grid-cols-3 sm:grid-cols-2 grid-cols-1 gap-6 justify-items-center '>
-            {data?.map((model, index) => (
-              <Link 
-                key={index} 
-                href={`models/${model.title}`} 
-                className='flex flex-col justify-center border border-white rounded-md mb-3 hover:scale-110 duration-300 w-full min-w-[18rem] max-w-xs '
-              >
-                {model.pictures.length > 0 && 
-                  <div className='h-72 overflow-hidden rounded-lg relative'>
-                    <Image className='rounded-lg object-cover' src={model.pictures[0].url} alt={model.title} fill={true} sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"/>
-                  </div>
-                }
-                {model.pictures.length === 0 && <div className='rounded-lg bg-foreground/10 w-full h-72'>No Photo</div>}
-                <h2 className='text-xl font-bold'>{model.title}</h2>
-              </Link>
-            ))}
+            <ListItems items={initialModels.posts} fetchItems={fetchItems} />
+
           </div>
         </main>
       </div>
