@@ -50,7 +50,7 @@ export default async function Models() {
               >
                 {model.pictures.length > 0 && 
                   <div className='h-72 overflow-hidden rounded-lg relative'>
-                    <Image className='rounded-lg object-cover' src={model.pictures[0].url} alt={model.title} fill={true} />
+                    <Image className='rounded-lg object-cover' src={model.pictures[0].url} alt={model.title} fill={true} sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"/>
                   </div>
                 }
                 {model.pictures.length === 0 && <div className='rounded-lg bg-foreground/10 w-full h-72'>No Photo</div>}

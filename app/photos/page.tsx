@@ -31,7 +31,7 @@ export default async function Photos() {
               {data?.map((photo) => (
                   <Link href={`photos/${photo.file_name}`} className='flex flex-col justify-center border border-white rounded-md mb-3 hover:scale-110 duration-300 w-full min-w-[18rem] max-w-xs h-72'>
                     <div className='w-full h-full overflow-hidden rounded-lg relative'>
-                      <Image className='rounded-lg object-contain' src={photo.url} alt={photo.file_name} fill={true} />
+                      <Image className='rounded-lg object-contain' src={photo.url} alt={photo.file_name} fill={true} sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"/>
                     </div>
                   </Link>
                 ))}
