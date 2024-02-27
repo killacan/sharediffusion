@@ -142,6 +142,58 @@ export async function createPost(values: z.infer<typeof createPostSchema>, hasFi
 
 }
 
+export async function updatePost(values: z.infer<typeof updatePostSchema>) {
+  'use server' 
+
+  const cookieStore = cookies()
+  const supabase = createClient(cookieStore)
+  const title = values.title
+  const description = values.description
+
+  const { data: user, error } = await supabase.auth.getUser()
+
+  if (error || !user) {
+    return redirect('/login?message=must be logged in to update a post')
+  }
+
+  const { error: postVersionError } = await supabase.from('posts').update({title, description}).eq('user_id', user.user.id).eq('title', title)
+
+  if (postVersionError) {
+    console.log(postVersionError)
+    return redirect('/models?message=Could not update post')
+  }
+
+  return redirect(`/models/${title}?message=Model Post updated successfully`)
+}
+
+export async function deletePost(title: string) {
+  'use server'
+
+  const cookieStore = cookies()
+  const supabase = createClient(cookieStore)
+
+  const { data: user, error } = await supabase.auth.getUser()
+
+  if (error || !user) {
+    return redirect('/login?message=must be logged in to delete a post')
+  }
+
+  console.log(title, user.user.id, "this is the title and user id")
+
+  const { error: postVersionError } = await supabase.from('posts').delete().eq('user_id', user.user.id).eq('title', title)
+
+  if (postVersionError) {
+    console.log(postVersionError)
+    return redirect('/models?message=Could not delete post')
+  }
+
+  return redirect(`/models?message=Model Post deleted successfully`)
+}
+
+export async function getPosts() {
+  
+}
+
 export async function updateVersion(values: z.infer<typeof updateVersionFormSchema>, post: number, user_id: string, title: string) {
   'use server'
 
@@ -211,54 +263,6 @@ export async function addVersion(values: z.infer<typeof updateVersionFormSchema>
   }
 
   return redirect(`/models/${title}?message=Version added successfully`)
-}
-
-export async function updatePost(values: z.infer<typeof updatePostSchema>) {
-  'use server' 
-
-  const cookieStore = cookies()
-  const supabase = createClient(cookieStore)
-  const title = values.title
-  const description = values.description
-
-  const { data: user, error } = await supabase.auth.getUser()
-
-  if (error || !user) {
-    return redirect('/login?message=must be logged in to update a post')
-  }
-
-  const { error: postVersionError } = await supabase.from('posts').update({title, description}).eq('user_id', user.user.id).eq('title', title)
-
-  if (postVersionError) {
-    console.log(postVersionError)
-    return redirect('/models?message=Could not update post')
-  }
-
-  return redirect(`/models/${title}?message=Model Post updated successfully`)
-}
-
-export async function deletePost(title: string) {
-  'use server'
-
-  const cookieStore = cookies()
-  const supabase = createClient(cookieStore)
-
-  const { data: user, error } = await supabase.auth.getUser()
-
-  if (error || !user) {
-    return redirect('/login?message=must be logged in to delete a post')
-  }
-
-  console.log(title, user.user.id, "this is the title and user id")
-
-  const { error: postVersionError } = await supabase.from('posts').delete().eq('user_id', user.user.id).eq('title', title)
-
-  if (postVersionError) {
-    console.log(postVersionError)
-    return redirect('/models?message=Could not delete post')
-  }
-
-  return redirect(`/models?message=Model Post deleted successfully`)
 }
 
 type SignedURLResponse = {
@@ -377,7 +381,7 @@ export async function checkPostName(name: string) {
   const cookieStore = cookies()
   const supabase = createClient(cookieStore)
 
-  const { data: postData, error } = await supabase.from('posts').select('*').eq('title', name).single()
+  const { data: postData, error } = await supabase.from('posts').select('title').eq('title', name).single()
 
   console.log(postData, error, "this is the post data")
   if (error && error.details !== 'The result contains 0 rows' || postData) {

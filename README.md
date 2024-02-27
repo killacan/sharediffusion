@@ -37,7 +37,7 @@ The project is currently in the planning stages, and the roadmap will be updated
 - [x] Img uploads to Backblaze B2
 - [x] Create posting system for images
 - [ ] Pictures page for uploaded pictures
-- [ ] Review TOS and Privacy Policy
+- [x] Review TOS and Privacy Policy
 - [ ] OPEN ALPHA
 - [ ] Create a search bar for models
 - [ ] Create basic user profile page/dashboard
