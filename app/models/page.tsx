@@ -7,7 +7,7 @@ import Image from 'next/image'
 import { modelsState } from '../_components/modelsStore'
 import { getPosts } from '../_components/serveractions'
 import { useEffect } from 'react'
-import ListItems from '../_components/listItems'
+import ListModels from '../_components/listModels'
 import { get } from 'http'
 
 export const revalidate = 120
@@ -42,7 +42,7 @@ export default async function Models() {
         <main className="flex-1 flex flex-col gap-6 max-w-7xl mx-auto">
           <h1 className="text-3xl font-bold text-center">Models</h1>
           <div className='grid xl:grid-cols-4 lg:grid-cols-3 sm:grid-cols-2 grid-cols-1 gap-6 justify-items-center '>
-            <ListItems items={initialModels.posts} fetchItems={fetchItems} />
+            <ListModels items={initialModels.posts} fetchItems={fetchItems} />
 
           </div>
         </main>

@@ -194,7 +194,11 @@ export async function getPosts(page: number) {
   const cookieStore = cookies()
   const supabase = createClient(cookieStore)
 
-  const { data: postData, error } = await supabase.from('posts').select('*, pictures(*)').order('updated_at', { ascending: false }).range(page * 10, (page * 10) + 10)
+  const { data: postData, error } = await supabase
+    .from('posts')
+    .select('*, pictures(*)')
+    .order('updated_at', { ascending: false })
+    .range(page * 25, (page * 25) + 25)
 
   if (error) {
     console.error(error)
@@ -384,6 +388,26 @@ export async function createImg(post_id: number | undefined, name: string, nsfw:
   }
   
 
+}
+
+export async function getImgs(page: number) {
+  'use server'
+
+  const cookieStore = cookies()
+  const supabase = createClient(cookieStore)
+
+  const { data: imgData, error } = await supabase
+    .from('pictures')
+    .select('*')
+    .order('updated_at', { ascending: false })
+    .range(page * 25, (page * 25) + 25)
+
+  if (error) {
+    console.error(error)
+    return { imgs: [] }
+  }
+
+  return { imgs: imgData }
 }
 
 export async function checkPostName(name: string) {

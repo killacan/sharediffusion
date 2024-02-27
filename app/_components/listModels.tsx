@@ -3,15 +3,19 @@ import Link from "next/link";
 import Image from "next/image";
 import { useState } from "react";
 
-export default function ListItems({items, fetchItems}: {items: any[], fetchItems: (offset: number) => Promise<{ posts: any[]; }>}) {
+export default function listModels({items, fetchItems}: {items: any[], fetchItems: (offset: number) => Promise<{ posts: any[]; }>}) {
 
     const [models, setModels] = useState(items)
+    const [loadMore, setLoadMore] = useState(items.length > 10 ? true : false)
 
     const handleFetchItems = async () => {
         const newModels = await fetchItems(models.length / 10)
+        if (newModels.posts.length === 0) {
+            setLoadMore(false)
+            return
+        }
         setModels([...models, ...newModels.posts])
     }
-    
 
     return (
         <>
@@ -30,7 +34,7 @@ export default function ListItems({items, fetchItems}: {items: any[], fetchItems
                 <h2 className='text-xl font-bold'>{model.title}</h2>
                 </Link>
             ))}
-            {models.length % 10 !== 0 && <button onClick={handleFetchItems}>Load more</button>}
+            {loadMore && <button className='bg-blue-600 border border-white rounded-md p-2 hover:bg-blue-500 duration-300 text-center cursor-pointer w-full h-72' onClick={handleFetchItems}>Load more</button>}
           </>
     )
 }
