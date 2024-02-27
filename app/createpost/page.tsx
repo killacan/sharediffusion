@@ -425,8 +425,74 @@ export default function PostAModel({
                             <FormDescription>
                                 Files must be under 10MB
                             </FormDescription>
+                            <Dropzone
+                            accept={{
+                                "image/*": [".jpg", ".jpeg", ".png"],
+                            }}
+                            onDropAccepted={(files) => {
+                                const filteredFiles = files.filter((file) => {
+                                    if (file.size !== undefined && file.size > 10000000) {
+                                        setFileError("No seriously, files must be under 10MB.")
+                                        return false;
+                                    } else if (file.type !== undefined && !acceptedTypes.includes(file.type)) {
+                                        setFileError("Only images are allowed")
+                                        return false;
+                                    } else {
+                                        console.log(file, "file")
+                                        setFileError(undefined)
+                                        return true;
+                                    }
+                                });
+                                // Map files to UploadFile<any> objects with uid
+                                const mappedFiles: CustomFile[] = filteredFiles.map((file, index) => {
+                                    return {
+                                        ...file,
+                                        name: file.name,  // Spread the 'name' property
+                                        size: file.size,  // Spread the 'size' property
+                                        type: file.type,  // Spread the 'type' property
+                                        lastModified: file.lastModified, // Spread the 'lastModified' property
+                                        uid: `${index}-${Date.now()}`, // Add the uid property
+                                        preview: URL.createObjectURL(file), // Add the preview property
+                                        nsfw: false, // Add the nsfw property
+                                        originFileObj: file, // Add the originFileObj property
+                                    }
+                                });
+                            
+                                setFileList((prevFileList) => [...prevFileList, ...mappedFiles]);
+                            }}
+                            multiple={true}
+                            maxSize={5000000}
+                            >
+                            {({ getRootProps, getInputProps }) => (
+                                <div
+                                {...getRootProps({
+                                    className: cn(
+                                    "p-3 mb-4 flex flex-col items-center justify-center w-full rounded-md cursor-pointer border border-[#e2e8f0]"
+                                    ),
+                                })}
+                                >
+                                <div className="flex items-center gap-x-3 mt-2 mb-2">
+                                    <label
+                                    htmlFor="Products"
+                                    className={`text-sm text-[7E8DA0] cursor-pointer focus:outline-none focus:underline ${
+                                        fileError && "text-red-500"
+                                    }`}
+                                    >
+                                    Add your Images
+                                    <input {...getInputProps()} />
+                                    </label>
+                                </div>
+                                </div>
+                            )}
+                            </Dropzone>
+
+                        <aside className={thumbsContainer}>
+                        {fileList.map((file) => (
+                            <FileItem key={file.uid} file={file} onDelete={handleDelete} handleToggleNSFW={handleToggleNSFW} />
+                        ))}
+                        </aside>
                             {fileError && <FormMessage >{fileError}</FormMessage>}
-                            <button onClick={handleImgSubmit} >Submit</button>
+                            <button className="flex items-center justify-center border border-foreground/20 rounded-md px-4 py-2 text-foreground mb-2 w-full hover:bg-btn-background-hover" onClick={handleImgSubmit} >Submit</button>
 
                         </form>
                     </Form>
