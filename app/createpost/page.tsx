@@ -26,6 +26,7 @@ import React, {useEffect, useState} from 'react';
 import Dropzone from "react-dropzone";
 import { cn } from "@/app/_components/utils";
 import FileItem from "@/app/_components/fileItem";
+import { RcFile } from "antd/lib/upload";
 
 type FileType = Parameters<GetProp<UploadProps, 'beforeUpload'>>[0];
 
@@ -50,42 +51,14 @@ flex-row
 flex-wrap
 mt-4
 `;
-
-  const thumbTailwind = `
-    inline-flex
-    rounded-md
-    border
-    border-gray-300
-    mb-2
-    mr-2
-    w-24
-    h-24
-    p-1
-    box-border
-`;
   
-  const thumbInner = {
-    display: 'flex',
-    minWidth: 0,
-    overflow: 'hidden'
-  };
-  
-  const img = {
-    display: 'block',
-    width: 'auto',
-    height: '100%'
-  };
-  
-
 export default function PostAModel({
     searchParams,
   }: {
     searchParams: { message: string }
   }) {
 
-    const [fileList, setFileList] = useState<UploadFile[]>([]);
-
-    const [file, setFile] = useState<File | undefined>(undefined)
+    const [fileList, setFileList] = useState<CustomFile[]>([]);
     const [postNameError, setPostNameError] = useState<string | undefined>(undefined)
     const [fileError, setFileError] = useState<string | undefined>(undefined)
 
@@ -108,38 +81,18 @@ export default function PostAModel({
         }
     })
 
-    // const thumbs = fileList.map(file => (
-    //     <div className="flex flex-col" key={file.name}>
-    //         <div className={thumbTailwind} >
-    //         <div style={thumbInner}>
-    //             <img
-    //             src={file.preview}
-    //             style={img}
-    //             // Revoke data uri after image is loaded
-    //             onLoad={() => { 
-    //                 if (file.preview) URL.revokeObjectURL(file.preview) 
-    //             }}
-    //             />
-    //         </div>
-    //         </div>
-    //         <div className="flex items-center">
-    //             <label htmlFor={`toggle-nsfw-${file.uid}`} className="mr-2">NSFW:</label>
-    //             <input
-    //                 id={`toggle-nsfw-${file.uid}`}
-    //                 type="checkbox"
-    //                 checked={isNSFW}
-    //                 onChange={handleToggleNSFW}
-    //                 className="form-checkbox h-5 w-5 text-gray-600"
-    //             />
-    //         </div>
-    //         <button
-    //             onClick={() => onDelete(file.uid)}
-    //             className="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded"
-    //         >
-    //             Delete
-    //         </button>
-    //     </div>
-    //   ));
+    // Define a simplified File type
+    interface CustomFile {
+        uid: string;
+        name: string;
+        size: number;
+        type: string;
+        lastModified: number;
+        preview?: string;
+        nsfw: boolean;
+        originFileObj?: File;
+        // Other properties as needed
+    }
 
     const handleDelete = (uid: string) => {
         setFileList((prevFileList) => prevFileList.filter((file) => file.uid !== uid));
@@ -147,7 +100,7 @@ export default function PostAModel({
 
     const handleToggleNSFW = (uid: string) => {
         console.log(uid, "uid")
-        setFileList((prevFileList) => prevFileList.map((file) => {
+        setFileList((prevFileList: CustomFile[]) => prevFileList.map((file: CustomFile) => {
             if (file.uid === uid) {
                 return {
                     ...file,
@@ -159,42 +112,6 @@ export default function PostAModel({
         }));
         console.log(fileList, "fileList")
     }
-
-    const onChange: UploadProps['onChange'] = ({ fileList: newFileList }) => {
-        // if any of the files are larger than 10MB, remove them from the list
-        // console.log(acceptedTypes)
-        newFileList = newFileList.filter((file) => {
-            if (file.size !== undefined && file.size > 10000000) {
-                setFileError("No seriously, files must be under 10MB.")
-
-                return false
-            } else if (file.type !== undefined && !acceptedTypes.includes(file.type)) {
-                setFileError("Only images are allowed")
-                return false
-            } else {
-                setFileError(undefined)
-                return true
-            }
-
-        })
-        console.log(newFileList, "newFileList")
-        setFileList(newFileList);
-    };
-
-    const onPreview = async (file: UploadFile) => {
-        let src = file.url as string;
-        if (!src) {
-          src = await new Promise((resolve) => {
-            const reader = new FileReader();
-            reader.readAsDataURL(file.originFileObj as FileType);
-            reader.onload = () => resolve(reader.result as string);
-          });
-        }
-        const image = new Image();
-        image.src = src;
-        const imgWindow = window.open(src);
-        imgWindow?.document.write(image.outerHTML);
-    };
 
     const generateFileName = (bytes = 32) => {
         const array = new Uint8Array(bytes);
@@ -221,6 +138,7 @@ export default function PostAModel({
             fileList.forEach(async (file) => {
                 const fileContent = await file.originFileObj?.arrayBuffer();
                 // check to make sure we have the file and it's not empty
+                console.log(file.originFileObj, file.type, file.size, fileContent, "file info")
                 if (!file.originFileObj || !file.type || !file.size || !fileContent) {
                     console.log("no file or error with file")
                     return
@@ -330,14 +248,6 @@ export default function PostAModel({
         }
     }
 
-    // function handleFileChange(event: React.ChangeEvent<HTMLInputElement>) {
-    //     setFile(event.target.files?.[0])
-
-    // }
-
-    // console.log(fileList)
-    // console.log(file)
-
 
     useEffect(() => {
         // Make sure to revoke the data uris to avoid memory leaks, will run on unmount
@@ -373,9 +283,6 @@ export default function PostAModel({
                             <FormControl>
                                 <Input placeholder="awesome title here" {...field} />
                             </FormControl>
-                            {/* <FormDescription>
-                                This is your public display name.
-                            </FormDescription> */}
                             {postNameError && <FormMessage >{postNameError}</FormMessage>}
                             </FormItem>
                         )}
@@ -389,9 +296,6 @@ export default function PostAModel({
                             <FormControl>
                                 <Input placeholder="what version of your model is this?" {...field} />
                             </FormControl>
-                            {/* <FormDescription>
-                                This is your public display name.
-                            </FormDescription> */}
                             <FormMessage />
                             </FormItem>
                         )}
@@ -405,9 +309,6 @@ export default function PostAModel({
                             <FormControl>
                                 <Textarea placeholder="Describe this version, or what is unique about this version" {...field} />
                             </FormControl>
-                            {/* <FormDescription>
-                                This is your public display name.
-                            </FormDescription> */}
                             <FormMessage />
                             </FormItem>
                         )}
@@ -421,9 +322,6 @@ export default function PostAModel({
                             <FormControl>
                                 <Input placeholder="put your magnet link here" {...field} />
                             </FormControl>
-                            {/* <FormDescription>
-                                This is your public display name.
-                            </FormDescription> */}
                             <FormMessage />
                             </FormItem>
                         )}
@@ -461,12 +359,13 @@ export default function PostAModel({
                                         setFileError("Only images are allowed")
                                         return false;
                                     } else {
+                                        console.log(file, "file")
                                         setFileError(undefined)
                                         return true;
                                     }
                                 });
                                 // Map files to UploadFile<any> objects with uid
-                                const mappedFiles: UploadFile<any>[] = filteredFiles.map((file, index) => {
+                                const mappedFiles: CustomFile[] = filteredFiles.map((file, index) => {
                                     return {
                                         ...file,
                                         name: file.name,  // Spread the 'name' property
@@ -476,6 +375,7 @@ export default function PostAModel({
                                         uid: `${index}-${Date.now()}`, // Add the uid property
                                         preview: URL.createObjectURL(file), // Add the preview property
                                         nsfw: false, // Add the nsfw property
+                                        originFileObj: file, // Add the originFileObj property
                                     }
                                 });
                             
@@ -522,30 +422,6 @@ export default function PostAModel({
                 <Form {...photoForm}>
                     <form onSubmit={photoForm.handleSubmit(handleImgSubmit)} className="space-y-8">
                         <FormLabel>Upload Photos!</FormLabel>
-                            <FormField
-                            control={photoForm.control}
-                            name="file"
-                            render={({ field }) => (
-                                <FormItem>
-                                <FormControl>
-                                    <Upload
-                                    // action="https://run.mocky.io/v3/435e224c-44fb-4773-9faf-380c5e6a2188"
-                                    listType="picture-card"
-                                    fileList={fileList}
-                                    onChange={onChange}
-                                    onPreview={onPreview}
-                                    accept="image/*"
-                                >
-                                    {fileList.length < 5 && <p className="text-white">+ Upload</p>}
-                                </Upload>
-                                </FormControl>
-                                {/* <FormDescription>
-                                    This is your public display name.
-                                </FormDescription> */}
-                                <FormMessage />
-                                </FormItem>
-                            )}
-                            />
                             <FormDescription>
                                 Files must be under 10MB
                             </FormDescription>
