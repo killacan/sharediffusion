@@ -93,7 +93,6 @@ export default function PostAModel({
     }
 
     const handleToggleNSFW = (uid: string) => {
-        console.log(uid, "uid")
         setFileList((prevFileList: CustomFile[]) => prevFileList.map((file: CustomFile) => {
             if (file.uid === uid) {
                 return {
@@ -104,7 +103,6 @@ export default function PostAModel({
                 return file
             }
         }));
-        console.log(fileList, "fileList")
     }
 
     const generateFileName = (bytes = 32) => {
@@ -132,7 +130,6 @@ export default function PostAModel({
             fileList.forEach(async (file) => {
                 const fileContent = await file.originFileObj?.arrayBuffer();
                 // check to make sure we have the file and it's not empty
-                console.log(file.originFileObj, file.type, file.size, fileContent, "file info")
                 if (!file.originFileObj || !file.type || !file.size || !fileContent) {
                     console.log("no file or error with file")
                     return
@@ -353,7 +350,6 @@ export default function PostAModel({
                                         setFileError("Only images are allowed")
                                         return false;
                                     } else {
-                                        console.log(file, "file")
                                         setFileError(undefined)
                                         return true;
                                     }
@@ -432,7 +428,6 @@ export default function PostAModel({
                                         setFileError("Only images are allowed")
                                         return false;
                                     } else {
-                                        console.log(file, "file")
                                         setFileError(undefined)
                                         return true;
                                     }

@@ -194,18 +194,67 @@ export async function getPosts(page: number) {
   const cookieStore = cookies()
   const supabase = createClient(cookieStore)
 
-  const { data: postData, error } = await supabase
+  const { data: user } = await supabase.auth.getUser()
+  console.log(user, "this is the user")
+  
+  if (!user.user) {
+    const { data: postData, error } = await supabase
     .from('posts')
     .select('*, pictures(*)')
     .order('updated_at', { ascending: false })
     .range(page * 25, (page * 25) + 25)
 
+    postData?.forEach((post: any) => {
+      post.pictures = post.pictures.filter((img: any) => img.nsfw === false)
+    })
+
+    console.log(postData, error, "this is the post data")
   if (error) {
     console.error(error)
     return { posts: [] }
   }
 
   return { posts: postData }
+  }
+  
+  
+  const currentUser = await supabase.from('users').select('*').eq('user_id', user.user.id).single()
+  console.log(currentUser, "this is the current user")
+
+  if (currentUser.data.allow_nsfw === false) {
+    const { data: postData, error } = await supabase
+    .from('posts')
+    .select('*, pictures(*)')
+    .order('updated_at', { ascending: false })
+    .range(page * 25, (page * 25) + 25)
+
+    postData?.forEach((post: any) => {
+      post.pictures = post.pictures.filter((img: any) => img.nsfw === false)
+    })
+    
+    console.log(postData, error, "this is the post data")
+  if (error) {
+    console.error(error)
+    return { posts: [] }
+  }
+
+  return { posts: postData }
+  } else {
+    const { data: postData, error } = await supabase
+    .from('posts')
+    .select('*, pictures(*)')
+    .order('updated_at', { ascending: false })
+    .range(page * 25, (page * 25) + 25)
+
+    console.log(postData, error, "this is the post data")
+  if (error) {
+    console.error(error)
+    return { posts: [] }
+  }
+
+  return { posts: postData }
+  }
+
   
 }
 
@@ -396,18 +445,54 @@ export async function getImgs(page: number) {
   const cookieStore = cookies()
   const supabase = createClient(cookieStore)
 
-  const { data: imgData, error } = await supabase
-    .from('pictures')
-    .select('*')
-    .order('updated_at', { ascending: false })
-    .range(page * 25, (page * 25) + 25)
+  const { data: user } = await supabase.auth.getUser()
 
-  if (error) {
-    console.error(error)
-    return { imgs: [] }
+  if (!user.user) {
+    const { data: imgData, error } = await supabase
+      .from('pictures')
+      .select('*')
+      .eq('nsfw', false)
+      .order('updated_at', { ascending: false })
+      .range(page * 25, (page * 25) + 25)
+
+    if (error) {
+      console.error(error)
+      return { imgs: [] }
+    }
+
+    return { imgs: imgData }
   }
 
-  return { imgs: imgData }
+  const currentUser = await supabase.from('users').select('*').eq('user_id', user.user.id).single()
+
+  if (currentUser.data.allow_nsfw === false) {
+    const { data: imgData, error } = await supabase
+      .from('pictures')
+      .select('*')
+      .eq('nsfw', false)
+      .order('updated_at', { ascending: false })
+      .range(page * 25, (page * 25) + 25)
+
+    if (error) {
+      console.error(error)
+      return { imgs: [] }
+    }
+
+    return { imgs: imgData }
+  } else {
+    const { data: imgData, error } = await supabase
+      .from('pictures')
+      .select('*')
+      .order('updated_at', { ascending: false })
+      .range(page * 25, (page * 25) + 25)
+
+    if (error) {
+      console.error(error)
+      return { imgs: [] }
+    }
+
+    return { imgs: imgData }
+  }
 }
 
 export async function checkPostName(name: string) {
