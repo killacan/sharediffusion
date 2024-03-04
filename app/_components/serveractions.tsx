@@ -84,6 +84,19 @@ export async function signUp(values: z.infer<typeof signupFormSchema>) {
   return redirect('/login?message=Check email to continue sign in process')
 }
 
+export async function updateProfile(values: z.infer<typeof signupFormSchema>) {
+  "use server"
+
+  const cookieStore = cookies()
+  const supabase = createClient(cookieStore)
+
+  const { data: user, error } = await supabase.auth.getUser()
+
+  if (error || !user.user) {
+    return redirect('/login?message=must be logged in to update profile')
+  }
+}
+
 export async function createPost(values: z.infer<typeof createPostSchema>, hasFile: boolean) {
   'use server'
 
@@ -164,7 +177,7 @@ export async function updatePost(values: z.infer<typeof updatePostSchema>) {
   return redirect(`/models/${title}?message=Model Post updated successfully`)
 }
 
-export async function deletePost(title: string) {
+export async function deletePost(title: string, post_id: number) {
   'use server'
 
   const cookieStore = cookies()
@@ -178,7 +191,16 @@ export async function deletePost(title: string) {
 
   console.log(title, user.user.id, "this is the title and user id")
 
+  // const { data: photoData, error: photoError } = await supabase
+  //   .from('pictures')
+  //   .select('file_name')
+  //   .eq('post_id', post_id)
+
   const { error: postVersionError } = await supabase.from('posts').delete().eq('user_id', user.user.id).eq('title', title)
+
+  // if (photoData) {
+
+  // }
 
   if (postVersionError) {
     console.log(postVersionError)
@@ -231,7 +253,7 @@ export async function getPosts(page: number) {
     postData?.forEach((post: any) => {
       post.pictures = post.pictures.filter((img: any) => img.nsfw === false)
     })
-    
+
     console.log(postData, error, "this is the post data")
   if (error) {
     console.error(error)

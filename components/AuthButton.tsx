@@ -1,14 +1,14 @@
 import { createClient } from '@/utils/supabase/server'
 import Link from 'next/link'
 import { cookies } from 'next/headers'
-import { User } from '@supabase/supabase-js'
+import { Session, User } from '@supabase/supabase-js'
 import LinkComponent from '@/app/_components/link'
 
 interface AuthButtonProps {
-  user: User | null;
+  session: Session | null;
 }
 
-export default function AuthButton({user}: AuthButtonProps) {
+export default function AuthButton({session}: AuthButtonProps) {
 
   const signOut = async () => {
     'use server'
@@ -19,9 +19,11 @@ export default function AuthButton({user}: AuthButtonProps) {
     // return redirect('/login')
   }
 
-  return user ? (
+  console.log(session, 'session')
+
+  return session ? (
     <div className="flex items-center gap-4">
-      <LinkComponent href={`/profiles/${user.user_metadata.username}`}>{user.user_metadata.username}!</LinkComponent>
+      <LinkComponent href={`/profiles/${session.user.user_metadata.username}`}>{session.user.user_metadata.username}!</LinkComponent>
       <form action={signOut}>
         <button className="py-2 px-4 rounded-md no-underline bg-btn-background hover:bg-btn-background-hover">
           Logout

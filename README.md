@@ -44,6 +44,8 @@ The project is currently in the planning stages, and the roadmap will be updated
 - [ ] Create an edit for user profile page
 - [ ] Add Tags to models
 - [ ] Add Tags to images
-- [ ] Improve user authentication( send less requests to Supabase)
+- [x] Improve user authentication( send less requests to Supabase)
 - [ ] Create Donation Page
 - [ ] Make Descriptions nicer / in markdown
+- [ ] OPEN BETA
+- [ ] Tutorial on how to create magnet links

@@ -49,9 +49,18 @@ export default async function Post({ params: { title } }: { params: { title: str
         data: { user },
     } = await supabase.auth.getUser()
 
+    let currentUserData 
+    
+    if (user) {
+        currentUserData = await supabase.from('users').select('username, profile_pic, user_id, is_moderator').eq('user_id', user.id).single() as { data: userData }
+    }
+
+    console.log(user, "this is user")
+
     const cleanTitle = title.replaceAll('%20', ' ')
     const { data, error } = await supabase.from('posts').select('*, versions(*)').eq('title', cleanTitle).single()
 
+    console.log(data, "this is data")
     let userData
 
     if (data) {
@@ -138,7 +147,7 @@ export default async function Post({ params: { title } }: { params: { title: str
                                     </DialogDescription>
                                     <DialogFooter>
                                         <DialogClose className='bg-green-700 flex items-center justify-center border border-foreground/20 rounded-md px-4 py-2 text-foreground my-2 w-1/2 hover:bg-green-600'>Cancel</DialogClose>
-                                        <DeleteButton title={cleanTitle} />
+                                        <DeleteButton title={cleanTitle} post_id={data.post_id} />
                                     </DialogFooter>
                                     </DialogHeader>
                                 </DialogContent>
@@ -147,7 +156,7 @@ export default async function Post({ params: { title } }: { params: { title: str
                     </div>}
 
                 </div>
-                {userData.data.is_moderator && 
+                {currentUserData?.data.is_moderator && 
                     <div className='flex flex-col justify-center w-full gap-2'>
                         <p>Moderator Tools:</p>
                         <div className='flex justify-center w-full gap-2'>
@@ -172,7 +181,7 @@ export default async function Post({ params: { title } }: { params: { title: str
                                     </DialogDescription>
                                     <DialogFooter>
                                         <DialogClose className='bg-green-700 flex items-center justify-center border border-foreground/20 rounded-md px-4 py-2 text-foreground my-2 w-1/2 hover:bg-green-600'>Cancel</DialogClose>
-                                        <DeleteButton title={cleanTitle} />
+                                        <DeleteButton title={cleanTitle} post_id={data.post_id} />
                                     </DialogFooter>
                                     </DialogHeader>
                                 </DialogContent>

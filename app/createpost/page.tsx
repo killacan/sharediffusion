@@ -161,6 +161,8 @@ export default function PostAModel({
                                 "X-Bz-Content-Sha1": hashHex,
                             }
                         });
+
+                        console.log(response, "this is response")
     
                         // this is what adds the img to the DB
                         createImg(postId, name, file.nsfw)
@@ -221,6 +223,8 @@ export default function PostAModel({
                                 "X-Bz-Content-Sha1": hashHex,
                             }
                         });
+
+                        console.log(response, "this is response")
     
                         // this is what adds the img to the DB
                         createImg(undefined, name, file.nsfw)

@@ -2,10 +2,10 @@
 
 import { deletePost } from "./serveractions"
 
-export default function DeleteButton({title}: {title: string}) {
+export default function DeleteButton({title, post_id}: {title: string, post_id: number}) {
 
     function handleDelete() {
-        deletePost(title)
+        deletePost(title, post_id)
     }
 
     return (
