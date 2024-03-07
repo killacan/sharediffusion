@@ -1,3 +1,5 @@
+export const runtime = 'edge';
+
 import { getImgs } from '../_components/serveractions'
 import ListPhotos from '../_components/listPhotos'
 

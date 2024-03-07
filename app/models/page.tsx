@@ -1,3 +1,5 @@
+export const runtime = 'edge';
+
 // this is to display all the models that have been uploaded. 
 
 import { headers, cookies } from 'next/headers'

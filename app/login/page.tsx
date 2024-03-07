@@ -1,4 +1,7 @@
 'use client'
+
+export const runtime = 'edge';
+
 import OAuthWithDiscord from '../_components/oauthbutton'
 import OAuthWithGithub from '../_components/oauthgithub'
 import { signIn, signUp } from '../_components/serveractions'
