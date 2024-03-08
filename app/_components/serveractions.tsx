@@ -5,24 +5,24 @@ import { headers, cookies } from 'next/headers'
 import { createPostSchema, updatePostSchema } from './schemas';
 import { signinFormSchema, signupFormSchema, updateVersionFormSchema } from './schemas' 
 import { z } from 'zod';
-import B2 from 'backblaze-b2';
+import { PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
+import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 
-// const b2 = new S3Client({
-//   endpoint: 'https://s3.us-west-004.backblazeb2.com',
-//   region: 'us-west-004',
-//   credentials: {
-//     accessKeyId: process.env.BACKBLAZE_KEY_ID!,
-//     secretAccessKey: process.env.BACKBLAZE_APP_KEY!,
-//   },
-// })
+const r2 = new S3Client({
+  endpoint: process.env.CLOUDFLARE_SPECIFIC_ENDPOINT!,
+  region: "auto",
+  credentials: {
+    accessKeyId: process.env.CLOUDFLARE_ACCESS_KEY_ID!,
+    secretAccessKey: process.env.CLOUDFLARE_SECRET_ACCESS_KEY!,
+  },
+})
 
-const b2 = new B2({
-  applicationKeyId: process.env.BACKBLAZE_TEST_APP_KEY_ID!, // or accountId: 'accountId'
-  applicationKey: process.env.BACKBLAZE_TEST_APP_KEY! // or masterApplicationKey
-});
+// const b2 = new B2({
+//   applicationKeyId: process.env.BACKBLAZE_TEST_APP_KEY_ID!, // or accountId: 'accountId'
+//   applicationKey: process.env.BACKBLAZE_TEST_APP_KEY! // or masterApplicationKey
+// });
 
-const bucket = 'sharediffusion-img-test'
-const bucketId = process.env.BACKBLAZE_TEST_BUCKET_ID!
+const bucket = 'sharediffusion-img'
 
 export async function signIn(values: z.infer<typeof signinFormSchema>) {
     'use server';
@@ -355,7 +355,7 @@ type SignedURLResponse = {
   failure?: undefined;
   success: {
       url: string;
-      authorizationToken: string;
+      // authorizationToken: string;
   };
 } | {
   failure: string;
@@ -379,17 +379,17 @@ const acceptedTypes = [
 
 const maxFileSize = 1024 * 1024 * 10 // 10MB
 
-export async function getSignedURL( fileType: string, size: number ): Promise<SignedURLResponse>{
+export async function getSignedURL( fileType: string, size: number, name:string ): Promise<SignedURLResponse>{
   'use server' 
 
-  // const cookieStore = cookies()
-  // const supabase = createClient(cookieStore)
+  const cookieStore = cookies()
+  const supabase = createClient(cookieStore)
 
-  // const { data: user, error } = await supabase.auth.getUser()
+  const { data: user, error } = await supabase.auth.getUser()
 
-  // if (error || !user) {
-  //   return { failure: 'must be logged in to create a post' }
-  // }
+  if (error || !user) {
+    return { failure: 'must be logged in to create a post' }
+  }
 
   if (!acceptedTypes.includes(fileType)) {
     return { failure: 'File type not accepted' }
@@ -401,22 +401,35 @@ export async function getSignedURL( fileType: string, size: number ): Promise<Si
 
   let uploadURL
 
+  // try {
+  //   await b2.authorize({
+  //     // ...common arguments (optional)
+  //   }); 
+  //   uploadURL = await b2.getUploadUrl({
+  //     bucketId: bucketId,
+  //   })
+  //   console.log(bucketId, "this is the bucket id")
+  // } catch (error) {
+  //   console.log(error, "this is the error")
+  //   return { failure: 'Could not authenticate user' }
+  // }
+
+  // this is for the s3 client
   try {
-    await b2.authorize({
-      // ...common arguments (optional)
-    }); 
-    uploadURL = await b2.getUploadUrl({
-      bucketId: bucketId,
-    })
-    console.log(bucketId, "this is the bucket id")
+    uploadURL = await getSignedUrl(r2, new PutObjectCommand({
+      Bucket: bucket,
+      Key: name,
+      ContentType: fileType,
+      ContentLength: size,
+    }), { expiresIn: 3600 } )
   } catch (error) {
     console.log(error, "this is the error")
     return { failure: 'Could not authenticate user' }
   }
 
-  // console.log(uploadURL.data.uploadUrl, "this is the upload url")
+  console.log(uploadURL, "this is the upload url")
   
-  return { success: { url: uploadURL.data.uploadUrl, authorizationToken: uploadURL.data.authorizationToken } }
+  return { success: { url: uploadURL } }
 
 
 }
@@ -433,30 +446,28 @@ export async function createImg(post_id: number | undefined, name: string, nsfw:
     return redirect('/createpost?message=must be logged in to create a post')
   }
   
-  const authorizeResponse = await b2.authorize({})
-
-  // we need to allow people to upload images without creating a post. 
-  if (!post_id) {
-    const { data: imgData, error } = await supabase.from('pictures').insert({
-      url: `${authorizeResponse.data.downloadUrl}/file/${bucket}/${name}`,
-      file_name: name,
-      user_id: user.user.id,
-      nsfw,
-    })
-  } else {
-    const { data: imgData, error} = await supabase.from('pictures').insert({
-      url: `${authorizeResponse.data.downloadUrl}/file/${bucket}/${name}`,
-      post_id,
-      file_name: name,
-      user_id: user.user.id,
-      nsfw,
-    })
+  // // we need to allow people to upload images without creating a post. 
+  // if (!post_id) {
+  //   const { data: imgData, error } = await supabase.from('pictures').insert({
+  //     url: `${authorizeResponse.data.downloadUrl}/file/${bucket}/${name}`,
+  //     file_name: name,
+  //     user_id: user.user.id,
+  //     nsfw,
+  //   })
+  // } else {
+  //   const { data: imgData, error} = await supabase.from('pictures').insert({
+  //     url: `${authorizeResponse.data.downloadUrl}/file/${bucket}/${name}`,
+  //     post_id,
+  //     file_name: name,
+  //     user_id: user.user.id,
+  //     nsfw,
+  //   })
   
-    if (error || !imgData) {
-      console.log(error)
-      return redirect('/createpost?message=Could not create img')
-    }
-  }
+  //   if (error || !imgData) {
+  //     console.log(error)
+  //     return redirect('/createpost?message=Could not create img')
+  //   }
+  // }
   
 
 }

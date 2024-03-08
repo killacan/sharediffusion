@@ -137,7 +137,8 @@ export default function PostAModel({
                     return
                 }
                 // Get the signed URL for uploading the file
-                const signedURLResult = await getSignedURL(file.type, file.size);
+                const name = generateFileName()
+                const signedURLResult = await getSignedURL(file.type, file.size, name);
         
                 if (signedURLResult.failure || !signedURLResult.success) {
                     console.log(signedURLResult.failure);
@@ -150,17 +151,16 @@ export default function PostAModel({
                         .join("");
                     // Upload the file using the signed URL
                     try {
-                        const name = generateFileName()
                         
                         const response = await fetch(signedURL, {
-                            method: 'POST',
+                            method: 'PUT',
                             mode: 'cors',
                             body: file.originFileObj, // File object
                             headers: {
                                 'Content-Type': file.type, // Mime type of the file
-                                'authorization': signedURLResult.success.authorizationToken,
-                                "X-Bz-File-Name": name,
-                                "X-Bz-Content-Sha1": hashHex,
+                                
+                                // "X-Bz-File-Name": name,
+                                // "X-Bz-Content-Sha1": hashHex,
                             }
                         });
 
@@ -199,7 +199,8 @@ export default function PostAModel({
                     return
                 }
                 // Get the signed URL for uploading the file
-                const signedURLResult = await getSignedURL(file.type, file.size);
+                const name = generateFileName()
+                const signedURLResult = await getSignedURL(file.type, file.size, name);
         
                 if (signedURLResult.failure || !signedURLResult.success) {
                     console.log(signedURLResult.failure);
@@ -210,19 +211,20 @@ export default function PostAModel({
                     const hashHex = hashArray
                         .map((b) => b.toString(16).padStart(2, "0"))
                         .join("");
-                    // Upload the file using the signed URL
+                    
+                    console.log(signedURL, "this is signed url")
+                        // Upload the file using the signed URL
                     try {
-                        const name = generateFileName()
                         
                         const response = await fetch(signedURL, {
-                            method: 'POST',
+                            method: 'PUT',
                             mode: 'cors',
                             body: file.originFileObj, // File object
                             headers: {
                                 'Content-Type': file.type, // Mime type of the file
-                                'authorization': signedURLResult.success.authorizationToken,
-                                "X-Bz-File-Name": name,
-                                "X-Bz-Content-Sha1": hashHex,
+
+                                // "X-Bz-File-Name": name,
+                                // "X-Bz-Content-Sha1": hashHex,
                             }
                         });
 

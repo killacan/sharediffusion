@@ -19,7 +19,7 @@ export default function AuthButton({session}: AuthButtonProps) {
     // return redirect('/login')
   }
 
-  console.log(session, 'session')
+  // console.log(session, 'session')
 
   return session ? (
     <div className="flex items-center gap-4">
