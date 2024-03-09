@@ -1,6 +1,6 @@
 'use client'
 
-export const runtime = 'edge';
+// export const runtime = 'edge';
 
 import { createPost, getSignedURL, createImg, checkPostName } from "../_components/serveractions"
 import * as z from 'zod'

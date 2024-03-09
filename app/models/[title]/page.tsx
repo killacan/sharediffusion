@@ -1,4 +1,4 @@
-export const runtime = 'edge';
+// export const runtime = 'edge';
 
 // this page is going to be for grabbing an individual post and displaying it.
 import { createClient } from '@/utils/supabase/server'
